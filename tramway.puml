@@ -1,0 +1,51 @@
+@startuml tramway
+
+class World {
+  redraw(): void
+}
+World *-- "8" TrafficLight
+World *-- "6" Tram
+World *-- "*" Car
+World *-- "1" TramsTrafficController
+World *-- "1" CarsTrafficController
+
+class Vehicle {
+  advance(): void
+  enter(): void
+  leave(): void
+}
+class Tram {}
+class Car {}
+Tram --|> Vehicle
+Car --|> Vehicle
+Vehicle -- TrafficController
+
+interface TrafficController {
+  # getPermit(Direction dir)
+}
+
+class TramsTrafficController {}
+TramsTrafficController ..|> TrafficController
+
+class CarsTrafficController {}
+CarsTrafficController ..|> TrafficController
+
+class TrafficLight {
+  # setColor(String c): void
+  + getColor(): String
+}
+
+enum Color {
+  GREEN
+  RED
+  YELLOW
+}
+
+enum Direction {
+  NORTH
+  SOUTH
+  EAST
+  WEST
+}
+
+@enduml

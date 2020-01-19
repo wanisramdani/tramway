@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg16"
+   inkscape:version="0.92.4 (f8dce91, 2019-08-02)"
+   sodipodi:docname="road.inkscape.svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-317.14286"
+     inkscape:cy="674.28571"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1366"
+     inkscape:window-height="717"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m -294.06548,219.1369 149.67857,0.75596 65.767864,-26.45833 92.982141,4.53571 49.136903,23.43451 231.321432,-1.51189 0,-70.30358 -238.880956,1.51191 -41.577379,46.86905 -92.982141,-4.53571 -52.916664,-38.55358 -162.52977,0 z"
+       id="path18"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccccc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 197.30357,254.66666 3.02381,-141.36309"
+       id="path20"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 181.42857,113.30357 -2.26786,140.60714 v 0"
+       id="path22"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#d400aa;stroke-width:0.26458332"
+       id="trams-intersection"
+       width="92.982147"
+       height="14.363077"
+       x="-78.619049"
+       y="188.8988"
+       inkscape:label="#rect27" />
+    <rect
+       style="fill:#d400aa;stroke-width:0.26458332"
+       id="cars-intersection"
+       width="15.875019"
+       height="141.36308"
+       x="181.42857"
+       y="113.30357"
+       inkscape:label="#rect29" />
+    <rect
+       style="fill:#00ff00;stroke-width:0.26458332"
+       id="tram-A"
+       width="42.333332"
+       height="15.119047"
+       x="-294.06549"
+       y="219.1369"
+       inkscape:label="#rect50" />
+  </g>
+</svg>

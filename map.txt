@@ -1,0 +1,20 @@
+
+                                          [7:R]  [6:R]   (5:G) [4:R] 
+                                                              #      
+    +---<          >---+                  +---<          >----#----+ 
+   /     section3       \                /      section2      #     \
+  /                      \              /                     #     |
+  |                       +---<    >---+                      #     |
+  \                      /              \                     #     |
+   \      section0      /                \      section1      #     /
+    +---<          >---+                  +---<          >----#----+ 
+                                                              #      
+            [0:Y]  [1:R]                                 [2:R] (3:G) 
+
+
+LEGEND
+======
+[i:c] Tram traffic light; 'i' is the light's id and 'c' is its color
+(i:c) Car traffic light; 'i' is the light's id and 'c' is its color
+Colors: R(ed), G(reen), Y(ellow)
+Trams: 'a' (lowercase means relative), 'A' (uppercase means dynamic)
