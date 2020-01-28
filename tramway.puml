@@ -1,15 +1,23 @@
 @startuml tramway
 
-class World {
+class WorldView {
+  segments: List
+  
   redraw(): void
 }
+WorldView -- World
+
+class World {}
 World *-- "8" TrafficLight
 World *-- "6" Tram
 World *-- "*" Car
 World *-- "1" TramsTrafficController
 World *-- "1" CarsTrafficController
 
-class Vehicle {
+abstract class Vehicle {
+  dir: TrafficDirection
+  canAdvance: Semaphore
+
   advance(): void
   enter(): void
   leave(): void
@@ -21,7 +29,7 @@ Car --|> Vehicle
 Vehicle -- TrafficController
 
 interface TrafficController {
-  # getPermit(Direction dir)
+  # getPermit(TrafficDirection dir)
 }
 
 class TramsTrafficController {}
@@ -35,13 +43,13 @@ class TrafficLight {
   + getColor(): String
 }
 
-enum Color {
+enum TrafficColor {
   GREEN
   RED
   YELLOW
 }
 
-enum Direction {
+enum TrafficDirection {
   NORTH
   SOUTH
   EAST

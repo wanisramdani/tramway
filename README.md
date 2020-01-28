@@ -1,5 +1,5 @@
 # DAC Tramway
-Assignment
+Concurrent Programming assignment
 
 See the PlantUML class diagram:
 ![](tramway-uml.png)

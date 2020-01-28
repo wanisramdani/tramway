@@ -1,8 +1,5 @@
-// Use JavaDoc and UMLGraph
-/*
-- Collections.syncronizedList(...)
-- [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
-*/
+// TODO: Use JavaDoc
+// TODO: Create diagrams from JavaDoc using UMLGraph
 
 enum TrafficLightColor {
   RED,
@@ -10,48 +7,48 @@ enum TrafficLightColor {
   YELLOW
 }
 
-// rename to Traffic Direction?
-enum Direction {
+enum TrafficDirection {
   NORTH,
   SOUTH,
   EAST,
   WEST
 }
 
-class World {
+/**
+ * View.
+ *
+ * @see https://docs.oracle.com/javase/8/javafx/api/javafx/animation/AnimationTimer.html
+ */
+class WorldView extends AnimationTimer {
 
-  // Used for calculating 'delta' of trams in each section (see the map)
+  /**
+   * Used to calculate 'delta' of vehicles in each section (see the map)
+   *
+   * @see Collections.syncronizedList(...)
+   * @see [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
+   */
   List[] sections = {
-    Collections.syncronizedList(new ArrayList());    
-    Collections.syncronizedList(new ArrayList());    
-    Collections.syncronizedList(new ArrayList());    
-    Collections.syncronizedList(new ArrayList());    
+    Collections.syncronizedList(new ArrayList());
+    Collections.syncronizedList(new ArrayList());
+    Collections.syncronizedList(new ArrayList());
+    Collections.syncronizedList(new ArrayList());
   }
 
-  boolean stopped = false;
-
-  void stop() {
-    vizRW.acquireWrite();
-    stopped = true;
-    vizRW.releaseWrite();
+  @Override
+  public void handle(long now) {
+    redraw();
   }
 
-  void redraw() {
-    vizRW.acquireRead();
-    if (stopped) {
-      vizRW.releaseRead();
-      return;
-    }
-
+  public void redraw() {
     redrawLights();
     redrawTrams();
-    redrawCars(); // ?
+    redrawCars();
   }
 
   /**
    * Update the `color` attribute of all lights.
    *
-   * @note MAYBE instead of introducing a new variable (onlyTrams),  Cars' light color is green if sFeu.getPermits() > 0
+   * @todo MAYBE instead of `onlyTrams`, Cars' traffic light color is green if sFeu.getPermits() > 0
    */
   void redrawLights() {
     /*
@@ -95,12 +92,30 @@ class World {
 
   }
 
+  void redrawCars() {
+    // ...
+  }
+
+}
+
+
+/**
+ * Model.
+ */
+class World {
+
+  boolean stopped = false;
+
+  void stop() {
+    worldView.stop();
+  }
+
 }
 
 
 class TramsController {
 
-  Direction turn = EAST;
+  TrafficDirection turn = EAST;
 
   int nTramsToEast = 0;
   int nTramsToWest = 0;
@@ -109,7 +124,7 @@ class TramsController {
    * Implements bridge crossing problem solution
    * @todo complete it
    */
-  void getPermit(Direction dir) {
+  void getPermit(TrafficDirection dir) {
     switch (dir) {
       case EAST:
         nTramsToEast++;
@@ -160,7 +175,7 @@ class CarsController {
    * Completed on paper. Similar to La Circulation
    *  except you 'change lights' when a tram arrives, not when the "timer times out"
    */
-  void getPermit(Direction dir) {
+  void getPermit(TrafficDirection dir) {
     switch (dir) {
       case EAST:
         nTramsToEast++;
@@ -190,11 +205,34 @@ class CarsController {
 }
 
 
-abstract class Vehicle {
-  Direction dir;
+abstract class Vehicle extends Thread {
+  /** Current direction */
+  TrafficDirection dir;
+
+  /**
+   * Used to wait for the animation to complete to progress to the next segment
+   *  `WorldView` should `canAdvance.release()` it */
+  Semaphore canAdvance;
+
+  public void run() {
+    while (true) {
+      canAdvance.acquire();
+      advance();
+    }
+  }
+
   abstract void advance();
   abstract void enter();
   abstract void leave();
+
+  /**
+   * @note Named 'perhaps()' and not 'maybe()' to distinguish it from the Maybe<?> monad.
+   * @return `true` 50% of the time
+   */
+  static boolean perhaps() {
+    return Math.random() < 50;
+  }
+
 }
 
 
@@ -212,14 +250,11 @@ class Tram extends Vehicle {
   @Override
   void advance() {
     getPermit();
-    segment = (segment + 1) % 4;
-
-    /*
+    // TODO: Ask WorldControl to update WorldView's "ViewModel"
+    //  something like this: `world.announce(this, oldSection, newSection);`
     sectionQueues[section].add(code)
     section = (section + 1) % 4;
     sectionQueues[section].remove(0);
-    */
-    // run animation...
   }
 
   @Override
@@ -239,7 +274,8 @@ class Tram extends Vehicle {
     }
   }
 
-  final static double DURATION_PER_TRAM = 0.25;
+  // TODO: How to calculate this?
+  static double DURATION_PER_TRAM = 0.25;
   double calculateDelta() {
     int pos = sectionQueue[section].indexOf(code) + 1;
     return pos * DURATION_PER_TRAM;
@@ -250,22 +286,20 @@ class Tram extends Vehicle {
 
 class Car extends Vehicle {
 
-  Direction dir;
+  TrafficDirection dir;
 
   Car() {
-    // TODO: randomly choose NORTH or SOUTH
-    dir = NORTH;
+    dir = perhaps() ? TrafficDirection.NORTH : TrafficDirection.SOUTH;
   }
 
   @Override
   void advance() {
     getPermit();
-    // run animation...
   }
 
   @Override
   void getPermit() {
-    CarsChangement.getPermit(dir);
+    CarsController.getPermit(dir);
   }
 
 }
