@@ -11,8 +11,8 @@ class World {}
 World *-- "8" TrafficLight
 World *-- "6" Tram
 World *-- "*" Car
-World *-- "1" TramsTrafficController
-World *-- "1" CarsTrafficController
+World *-- "1" BridgeController
+World *-- "1" IntersectionController
 
 abstract class Vehicle {
   dir: TrafficDirection
@@ -32,11 +32,11 @@ interface TrafficController {
   # getPermit(TrafficDirection dir)
 }
 
-class TramsTrafficController {}
-TramsTrafficController ..|> TrafficController
+class BridgeController {}
+BridgeController ..|> TrafficController
 
-class CarsTrafficController {}
-CarsTrafficController ..|> TrafficController
+class IntersectionController {}
+IntersectionController ..|> TrafficController
 
 class TrafficLight {
   # setColor(String c): void
