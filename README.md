@@ -22,70 +22,70 @@ Document your code: [How to Write Doc Comments for the Javadoc Tool](https://www
 ## Problems
 
 ### Bridge crossing
-Trams go from section 1 to 2 (Tram12) or from section 2 to 1 (Tram21)
 
-**NOTE: "Changement" may happen when a Tram calls enter() or leave()**
+**NOTE: Changement \*may\* happen when a Tram calls enter() or leave()**
 
 ```
-int turn = 12
-int count12 = 0, count21 = 0
-Semaphore sem12 = 0, sem21 = 0
+turn = WEST
+
+int goingWest = 0, goingEast = 0
+Semaphore canGoWest = 0, canGoEast = 0
 Semaphore mutex = 1
 ```
 
 ```
-Tram12::enter() {
-  p(mutex)
-  count12++
-  if ( (turn == 12 && count12 == 1) || (turn == 21 && count21 == 0) ) {
-    turn = 12
-    v(sem12)
+TramGoingWest::enter() {
+  p(mutex);
+  goingWest++;
+  if ( (turn == WEST && goingWest == 1) || (turn == EAST && goingEast == 0) ) {
+    turn = WEST;
+    v(canGoWest);
   }
-  v(mutex)
+  v(mutex);
 
-  p(sem12)
+  p(canGoWest);
 }
 
-Tram12::leave() {
-  p(mutex)
-  count12--
-  if (count12 > 0) {
-    v(sem12)
+TramGoingWest::leave() {
+  p(mutex);
+  goingWest--;
+  if (goingWest > 0) {
+    v(canGoWest);
   } else {
-    if (count21 > 0) {
-      turn = 21
-      v(sem21)
+    if (goingEast > 0) {
+      turn = EAST;
+      v(canGoEast);
     }
   }
-  v(mutex)
+  v(mutex);
 }
 ```
 
 ```
-Tram21::enter() {
-  p(mutex)
-  count21++
-  if ( (turn == 21 && count21 == 1) || (turn == 12 && count12 == 0) ) {
-    turn = 21
-    v(sem21)
+TramGoingEast::enter() {
+  p(mutex);
+  goingEast++;
+  if ( (turn == EAST && goingEast == 1) || (turn == WEST && goingWest == 0) ) {
+    turn = EAST;
+    v(canGoEast);
   }
-  v(mutex)
+  v(mutex);
 
-  p(sem21)
+  p(canGoEast);
 }
 
-Tram21::leave() {
-  p(mutex)
-  count21--
-  if (count21 > 0) {
-    v(sem21)
+TramGoingEast::leave() {
+  p(mutex);
+  goingEast--;
+  if (goingEast > 0) {
+    v(canGoEast);
   } else {
-    if (count12 > 0) {
-      turn = 12
-      v(sem12)
+    if (goingWest > 0) {
+      turn = WEST;
+      v(canGoWest);
     }
   }
-  v(mutex)
+  v(mutex);
 }
 ```
 
@@ -95,55 +95,58 @@ Tram21::leave() {
 
 ```
 int passingTrams = 0
-Semaphore voie1 = 1, feu1 = 1, voie2 = 1, feu2 = 1
+
+Semaphore canGoNorth = 1, lightNorthSem = 1
+Semaphore canGoSouth = 1, lightSouthSem = 1
+Semaphore mutex = 1
 ```
 
 ```
-Car1::enter() {
-  p(voie1)
-  p(feu1)
+CarGoingNorth::enter() {
+  p(canGoNorth);
+  p(lightNorthSem);
 }
 
-Car1::leave() {
-  p(feu1)
-  p(voie1)
+CarGoingNorth::leave() {
+  v(lightNorthSem);
+  v(canGoNorth);
 }
 ```
 
 ```
-Car2::enter() {
-  p(voie2)
-  p(feu2)
+CarGoingSouth::enter() {
+  p(canGoSouth);
+  p(lightSouthSem);
 }
 
-Car2::leave() {
-  p(feu2)
-  p(voie2)
+CarGoingSouth::leave() {
+  v(lightSouthSem);
+  v(canGoSouth);
 }
 ```
 
 ```
 Tram::enter() {
-  p(mutex)
-  passingTrams++
+  p(mutex);
+  passingTrams++;
   if (passingTrams == 1) {
-    v(mutex)
-    p(feu1)
-    p(feu2)
+    v(mutex);
+    p(lightNorthSem);
+    p(lightSouthSem);
   } else {
-    v(mutex)
+    v(mutex);
   }
 }
 
 Tram::leave() {
-  p(mutex)
-  passingTrams--
+  p(mutex);
+  passingTrams--;
   if (passingTrams == 0) {
-    v(mutex)
-    v(feu1)
-    v(feu2)
+    v(mutex);
+    v(lightNorthSem);
+    v(lightSouthSem);
   } else {
-    v(mutex)
+    v(mutex);
   }
 }
 ```

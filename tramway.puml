@@ -1,18 +1,34 @@
 @startuml tramway
 
 class WorldView {
-  segments: List
+  segmentQueues: List
   
   redraw(): void
 }
-WorldView -- World
+WorldView -- WorldModel
+WorldView *-- "10" TrafficLight
 
-class World {}
-World *-- "8" TrafficLight
-World *-- "6" Tram
-World *-- "*" Car
-World *-- "1" BridgeController
-World *-- "1" IntersectionController
+class WorldModel {
+}
+WorldModel *-- "6" Tram
+WorldModel *-- "*" Car
+WorldModel *-- "1" BridgeArbiter
+WorldModel *-- "1" IntersectionArbiter
+
+abstract class TrafficArbiter {
+  p(Semaphore x): void
+  v(Semaphore x): void
+  getPermit(TrafficDirection dir): void
+  releasePermit(TrafficDirection dir): void
+}
+
+class BridgeArbiter {
+}
+BridgeArbiter --|> TrafficArbiter
+
+class IntersectionArbiter {
+}
+IntersectionArbiter --|> TrafficArbiter
 
 abstract class Vehicle {
   dir: TrafficDirection
@@ -22,25 +38,19 @@ abstract class Vehicle {
   enter(): void
   leave(): void
 }
-class Tram {}
-class Car {}
+class Tram {
+}
+class Car {
+}
 Tram --|> Vehicle
 Car --|> Vehicle
-Vehicle -- TrafficController
+Vehicle -- TrafficArbiter
 
-interface TrafficController {
-  # getPermit(TrafficDirection dir)
-}
-
-class BridgeController {}
-BridgeController ..|> TrafficController
-
-class IntersectionController {}
-IntersectionController ..|> TrafficController
+Vehicle --|> Thread
 
 class TrafficLight {
-  # setColor(String c): void
-  + getColor(): String
+  setColor(String c): void
+  getColor(): String
 }
 
 enum TrafficColor {
