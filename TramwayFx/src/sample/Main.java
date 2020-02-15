@@ -4,14 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
-
-import static java.lang.Thread.sleep;
 
 public class Main extends Application {
     @Override
@@ -21,10 +14,11 @@ public class Main extends Application {
         Parent root = fxmlLoader.load();
         Controller ctrl = fxmlLoader.getController();
 
-        ctrl.setLightColor(TrafficColor.GREEN, 7);
-        ctrl.setTramDynamic();
 
         Scene scene = new Scene(root, 1266, 678);
+
+        ctrl.setLightColor(TrafficColor.GREEN, 7);
+        ctrl.setTramDynamic(0, true);
         primaryStage.setScene(scene);
         primaryStage.setTitle("TramwayFX");
         primaryStage.show();

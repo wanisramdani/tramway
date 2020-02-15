@@ -30,7 +30,7 @@
                 <elements>
                     <!-- Right Side of tram path -->
                             <!-- Section 0: West-South -->
-                    <MoveTo fx:id="startPoint" x="50.0" y="380" />
+                    <MoveTo fx:id="startPoint" x="60.0" y="380" />
                     <LineTo fx:id="startLine" x="300.0" y="380.0" /> <!-- A  -->
 
                     <MoveTo fx:id="startOfWestSouthCross" x="300" y="380" />
@@ -66,13 +66,13 @@
                     <MoveTo fx:id="startOfLastLine" x="300" y="250" />
                     <LineTo fx:id="endOfEastLine" x="60" y="250" />
 
-                    <MoveTo fx:id="endPoint" x="60.0" y="250" /> <!-- F  -->
                     <ArcTo fx:id="leftArc" radiusX="30.0" radiusY="50" x="50.0" y="380.0" />
-
+                    <MoveTo fx:id="endPoint" x="50.0" y="380" /> <!-- F  -->
+                    <LineTo fx:id="finalLine" x="60" y="380" />
                 </elements>
             </Path>
 
-             <Path fx:id="carPath">
+             <Path fx:id="roadPath">
                  <elements>
                         <!-- Left Border -->
                      <MoveTo fx:id="eastRoadBorder" x="950" y="100" />
@@ -82,9 +82,20 @@
                      <MoveTo fx:id="westRoadBorder" x="1050" y="100" />
                      <LineTo fx:id="westRoadLine" x="1050" y="500" />
                  </elements>
-
              </Path>
-            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" layoutX="50.0" layoutY="360.0" stroke="BLACK" strokeType="INSIDE" width="49.0" />
+
+             <Path fx:id="carPath">
+                 <elements>
+                     <MoveTo fx:id="southRoad" x="1023" y="100.0" />
+                     <LineTo fx:id="goNorth" x="1023" y="490.0" />
+
+                     <MoveTo fx:id="northRoad" x="970.0" y="100.0" />
+                     <LineTo fx:id="goSouth" x="970" y="490.0" />
+
+                 </elements>
+             </Path>
+
+            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" layoutX="-6.0" layoutY="1.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="49.0" x="28.0" y="365.0" />
             <Rectangle fx:id="AlphaCar" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="43.0" layoutX="1008.0" layoutY="452.0" stroke="BLACK" strokeType="INSIDE" width="30.0" />
             <Rectangle fx:id="BetaCar" arcHeight="5.0" arcWidth="5.0" fill="#770ec3" height="43.0" layoutX="958.0" layoutY="122.0" stroke="BLACK" strokeType="INSIDE" width="30.0" />
             <Button fx:id="playButton" layoutX="431.0" layoutY="591.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="49.0" text="Play" />
@@ -105,7 +116,7 @@
             <Line fx:id="linkSecondThirdLight" endX="194.0" endY="24.5" layoutX="726.0" layoutY="389.0" opacity="0.4" startX="88.0" startY="24.5" />
             <Line fx:id="linkForthFifthLight" endX="146.0" endY="42.0" layoutX="1074.0" layoutY="221.0" opacity="0.41" startX="11.0" startY="-0.5" />
             <Line fx:id="linkSixthSeventhLight" endX="92.0" endY="-8.5" layoutX="689.0" layoutY="229.0" opacity="0.38" startX="-79.0" startY="46.5" />
-            <Text fx:id="status" layoutX="431.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="172.41421508789062" />
+            <Text fx:id="status" layoutX="431.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" wrappingWidth="172.41421508789062" />
 
 
          </children>
