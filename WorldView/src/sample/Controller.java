@@ -1,6 +1,9 @@
 package sample;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.shape.ArcTo;
@@ -203,7 +206,18 @@ public class Controller {
 
     }
 
+    @FXML
     public void playTram() {
+        Timeline tl = new Timeline();
+
+        tl.setCycleCount(2);
+        tl.setAutoReverse(true);
+
+        KeyValue kv = new KeyValue(tram.translateXProperty(), 200);
+        KeyFrame kf = new KeyFrame(Duration.millis(7000), kv);
+        tl.getKeyFrames().addAll(kf);
+
+        tl.play();
     }
 
     public void stopTram() {
