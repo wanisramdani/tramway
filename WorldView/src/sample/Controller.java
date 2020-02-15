@@ -1,11 +1,14 @@
 package sample;
 
+import javafx.event.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -16,7 +19,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.awt.event.MouseEvent;
 
 public class Controller {
 
@@ -131,28 +133,28 @@ public class Controller {
     private Button resetButton;
 
     @FXML
-    private Rectangle zeroLight;
+    private Rectangle light_0;
 
     @FXML
-    private Rectangle firstLight;
+    private Rectangle light_1;
 
     @FXML
-    private Rectangle seventhLight;
+    private Rectangle light_2;
 
     @FXML
-    private Rectangle thirdLight;
+    private Rectangle light_3;
 
     @FXML
-    private Rectangle fourthLight;
+    private Rectangle light_4;
 
     @FXML
-    private Rectangle secondLight;
+    private Rectangle light_5;
 
     @FXML
-    private Rectangle fifthLight;
+    private Rectangle light_6;
 
     @FXML
-    private Rectangle sixthLight;
+    private Rectangle light_7;
 
     @FXML
     private Circle downCarLight;
@@ -182,6 +184,7 @@ public class Controller {
     public void displayPos(MouseEvent event) {
         status.setText("X= " + status.getX() + " Y= " + status.getY());
     }
+
 
     @FXML
     public void setTramDynamic() {
@@ -222,5 +225,7 @@ public class Controller {
 
     public void stopTram() {
     }
+
+
 
 }
