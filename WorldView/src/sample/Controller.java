@@ -33,6 +33,7 @@ public class Controller {
     @FXML
     private ArcTo leftArc;
 
+    // Section 0: West-South
     @FXML
     private MoveTo startPoint;
 
@@ -40,79 +41,82 @@ public class Controller {
     private LineTo startLine;
 
     @FXML
-    private MoveTo startOfLeftDownCross;
+    private MoveTo startOfWestSouthCross;
 
     @FXML
-    private LineTo leftDownCross;
+    private LineTo westSouthCross;
 
     @FXML
-    private MoveTo startOfRightBridge;
+    private MoveTo startOfWestBridge;
 
     @FXML
-    private LineTo rightBridge;
+    private LineTo westBridge;
 
     @FXML
-    private MoveTo endOfRightBridge;
+    private MoveTo endOfWestBridge;
+
+    // Section 1: East-South
+    @FXML
+    private LineTo eastSouthCross;
 
     @FXML
-    private LineTo rightDownCross;
+    private MoveTo endOfEastSouthCross;
 
     @FXML
-    private MoveTo endOfRightDownCross;
+    private LineTo endOfWestLine;
 
     @FXML
-    private LineTo endOfRightLine;
-
-    @FXML
-    private MoveTo endOfRightSide;
+    private MoveTo endOfWestSide;
 
     @FXML
     private ArcTo rightArc;
 
+    // Section 2 East-North
     @FXML
-    private MoveTo startOfLeftSide;
+    private MoveTo startOfEastSide;
 
     @FXML
-    private LineTo leftLine;
+    private LineTo eastLine;
 
     @FXML
-    private MoveTo startOfRightUpCross;
+    private MoveTo startOfEastNorthCross;
 
     @FXML
-    private LineTo rightUpCross;
+    private LineTo eastNorthCross;
 
     @FXML
-    private MoveTo startOfLeftBridge;
+    private MoveTo startOfEastBridge;
 
     @FXML
-    private LineTo leftBridge;
+    private LineTo eastBridge;
 
     @FXML
-    private MoveTo endOfLeftBridge;
+    private MoveTo endOfEastBridge;
 
+    // Section 3: West-North
     @FXML
-    private LineTo LeftUpCross;
+    private LineTo westNorthCross;
 
     @FXML
     private MoveTo startOfLastLine;
 
     @FXML
-    private LineTo endOfLeftLine;
+    private LineTo endOfEastLine;
 
     @FXML
     private Path carPath;
 
     @FXML
-    private MoveTo leftRoadBorder;
+    private MoveTo eastRoadBorder;
 
     @FXML
-    private LineTo leftRoadLine;
+    private LineTo eastRoadLine;
 
     @FXML
-    private MoveTo rightRoadBorder;
+    private MoveTo westRoadBorder;
 
     @FXML
-    private LineTo rightRoadLine;
+    private LineTo westRoadLine;
 
     @FXML
     private Rectangle tram;

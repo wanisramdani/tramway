@@ -32,42 +32,42 @@
                     <MoveTo fx:id="endPoint" x="60.0" y="250" /> <!-- F  -->
                     <ArcTo fx:id="leftArc" radiusX="30.0" radiusY="50" x="50.0" y="380.0" />
 
-                            <!-- Section 0 -->
+                            <!-- Section 0: West-South -->
                     <MoveTo fx:id="startPoint" x="50.0" y="380" />
                     <LineTo fx:id="startLine" x="300.0" y="380.0" /> <!-- A  -->
 
-                    <MoveTo fx:id="startOfLeftDownCross" x="300" y="380" />
-                    <LineTo fx:id="leftDownCross" x="450" y="310" />
+                    <MoveTo fx:id="startOfWestSouthCross" x="300" y="380" />
+                    <LineTo fx:id="westSouthCross" x="450" y="310" />
 
-                    <MoveTo fx:id="startOfRightBridge" x="450" y="310" /> <!-- B -->
-                    <LineTo fx:id="rightBridge" x="600" y="310" />
-                    <MoveTo fx:id="endOfRightBridge" x="600" y="310" /> <!-- C -->
+                    <MoveTo fx:id="startOfWestBridge" x="450" y="310" /> <!-- B -->
+                    <LineTo fx:id="westBridge" x="600" y="310" />
+                    <MoveTo fx:id="endOfWestBridge" x="600" y="310" /> <!-- C -->
 
-                            <!-- Section 1 -->
-                    <LineTo fx:id="rightDownCross" x="750" y="380" />
-                    <MoveTo fx:id="endOfRightDownCross" x="750" y="380" />
-                    <LineTo fx:id="endOfRightLine" x="1150" y="380" />
+                            <!-- Section 1 East-South-->
+                    <LineTo fx:id="eastSouthCross" x="750" y="380" />
+                    <MoveTo fx:id="endOfEastSouthCross" x="750" y="380" />
+                    <LineTo fx:id="endOfWestLine" x="1150" y="380" />
 
-                    <MoveTo fx:id="endOfRightSide" x="1150" y="380" />
+                    <MoveTo fx:id="endOfWestSide" x="1150" y="380" />
                     <ArcTo fx:id="rightArc" radiusX="30.0" radiusY="50.0" x="1150" y="250" /> <!-- G: Somewhere in the middle (1155, 310) -->
 
                     <!-- Left Side of tram path -->
-                            <!-- Section 2 -->
-                    <MoveTo fx:id="startOfLeftSide" x="1150" y="250" />
-                    <LineTo fx:id="leftLine" x="750" y="250" />
+                            <!-- Section 2 East-North -->
+                    <MoveTo fx:id="startOfEastSide" x="1150" y="250" />
+                    <LineTo fx:id="eastLine" x="750" y="250" />
 
-                    <MoveTo fx:id="startOfRightUpCross" x="750" y="250" />
-                    <LineTo fx:id="rightUpCross" x="600" y="310" />
+                    <MoveTo fx:id="startOfEastNorthCross" x="750" y="250" />
+                    <LineTo fx:id="eastNorthCross" x="600" y="310" />
 
-                    <MoveTo fx:id="startOfLeftBridge" x="600" y="310" /> <!-- J -->
-                    <LineTo fx:id="leftBridge" x="450" y="310" />
-                    <MoveTo fx:id="endOfLeftBridge" x="450" y="310" /> <!-- K -->
+                    <MoveTo fx:id="startOfEastBridge" x="600" y="310" /> <!-- J -->
+                    <LineTo fx:id="eastBridge" x="450" y="310" />
+                    <MoveTo fx:id="endOfEastBridge" x="450" y="310" /> <!-- K -->
 
-                            <!-- Section 3 -->
-                    <LineTo fx:id="LeftUpCross" x="300" y="250" />
+                            <!-- Section 3: West-North -->
+                    <LineTo fx:id="westNorthCross" x="300" y="250" />
 
                     <MoveTo fx:id="startOfLastLine" x="300" y="250" />
-                    <LineTo fx:id="endOfLeftLine" x="60" y="250" />
+                    <LineTo fx:id="endOfEastLine" x="60" y="250" />
 
                 </elements>
             </Path>
@@ -75,12 +75,12 @@
              <Path fx:id="carPath">
                  <elements>
                         <!-- Left Border -->
-                     <MoveTo fx:id="leftRoadBorder" x="950" y="100" />
-                     <LineTo fx:id="leftRoadLine" x="950" y="500" />
+                     <MoveTo fx:id="eastRoadBorder" x="950" y="100" />
+                     <LineTo fx:id="eastRoadLine" x="950" y="500" />
 
                         <!-- Right Border-->
-                     <MoveTo fx:id="rightRoadBorder" x="1050" y="100" />
-                     <LineTo fx:id="rightRoadLine" x="1050" y="500" />
+                     <MoveTo fx:id="westRoadBorder" x="1050" y="100" />
+                     <LineTo fx:id="westRoadLine" x="1050" y="500" />
                  </elements>
 
              </Path>

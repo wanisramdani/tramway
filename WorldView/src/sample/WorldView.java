@@ -11,7 +11,7 @@ public class WorldView extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("worldview.fxml"));
         Parent root = fxmlLoader.load();
         Controller ctrl = fxmlLoader.getController();
         ctrl.playTram();
