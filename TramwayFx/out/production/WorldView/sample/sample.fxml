@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <AnchorPane prefHeight="376.0" prefWidth="444.0">
+         <children>
+            <Path fx:id="lol" fill="DODGERBLUE" layoutX="75.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE">
+                <elements>
+                    <MoveTo x="100.0" />
+                    <LineTo x="150.0" y="50.0" />
+                    <ArcTo radiusX="30.0" radiusY="25" x="200.0" y="100.0" />
+                    <QuadCurveTo controlX="300.0" controlY="300.0" y="150.0" />
+                  <LineTo />
+                    <ClosePath />
+                  <MoveTo />
+                </elements>
+            </Path>
+         </children>
+      </AnchorPane>
+   </children>
+</GridPane>
