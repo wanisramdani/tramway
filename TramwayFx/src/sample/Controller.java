@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 public class Controller {
 
+
     public Controller() {}
 
     @FXML
@@ -99,7 +100,21 @@ public class Controller {
     private LineTo endOfEastLine;
 
     @FXML
+    private Path roadPath;
+
+    @FXML
     private Path carPath;
+    @FXML
+    private MoveTo southRoad;
+
+    @FXML
+    private LineTo goNorth;
+
+    @FXML
+    private MoveTo northRoad;
+
+    @FXML
+    private LineTo goSouth;
 
     @FXML
     private MoveTo eastRoadBorder;
@@ -112,6 +127,9 @@ public class Controller {
 
     @FXML
     private LineTo westRoadLine;
+
+    @FXML
+    public LineTo finalLine;
 
     @FXML
     private Rectangle tram;
@@ -179,39 +197,62 @@ public class Controller {
     @FXML
     private void initialize() { }
 
-    @FXML
-    public void displayPos(MouseEvent event) {
-        status.setText("X= " + status.getX() + " Y= " + status.getY());
-    }
+    private PathTransition pathTransition = new PathTransition();
 
 
     @FXML
-    public void setTramDynamic() {
-        PathTransition pathTransition = new PathTransition();
+    public void setTramDynamic(int tramId, boolean isDynamic) {
+
         pathTransition.setDuration(Duration.millis(10000));
         pathTransition.setNode(tram);
         pathTransition.setPath(tramPath);
         pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         pathTransition.setCycleCount(1);
+
+
         playButton.setOnAction(action -> {
-            playButton.setDisable(true);
-            pauseButton.setDisable(false);
+            playButtonOnAction();
             pathTransition.play();
         });
 
         pauseButton.setOnAction(action -> {
-            playButton.setDisable(false);
-            pauseButton.setDisable(true);
+            pauseButtonOnAction();
+            status.setText(String.valueOf( pathTransition.getCurrentTime() ));
             pathTransition.pause();
+        });
+
+        resetButton.setOnAction(action -> {
+            playButtonOnAction();
+            pathTransition.playFromStart();
         });
 
         pathTransition.onFinishedProperty().set(
                 (ActionEvent event) -> {
-                    playButton.setDisable(false);
-                    pauseButton.setDisable(true);
+                    pathTransition.play();
                 }
         );
 
+    }
+
+
+    public void setTramProgress(int id, Duration duration) {
+        pathTransition.jumpTo(duration);
+    }
+
+
+    public Duration getTramProgress(int tramId) {
+        return pathTransition.getCurrentTime();
+    }
+
+
+    public void playButtonOnAction() {
+        playButton.setDisable(true);
+        pauseButton.setDisable(false);
+    }
+
+    public void pauseButtonOnAction() {
+        playButton.setDisable(false);
+        pauseButton.setDisable(true);
     }
 
     @FXML
@@ -227,14 +268,25 @@ public class Controller {
 
         tl.play();
     }
-    
+
+
+    public void anotherPlay() {
+        final Timeline timeline = new Timeline();
+        timeline.setCycleCount(2);
+        timeline.setAutoReverse(true);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1000),
+                new KeyValue (tram.translateXProperty(), 200)));
+
+        timeline.play();
+
+    }
+
     public void setLightColor (TrafficColor color, int id) {
         Shape target;
         Color fxColor;
-        
         switch (color) {
             case RED: fxColor = Color.RED; break;
-            case GREEN: fxColor = Color.GREEN; break;
+            case GREEN: fxColor = Color.LAWNGREEN; break;
             case YELLOW: fxColor = Color.YELLOW; break;
             default:
                 throw new IllegalStateException("Unexpected value: " + color);
