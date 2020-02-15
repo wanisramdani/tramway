@@ -7,18 +7,13 @@ import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
 
 public class Controller {
 
@@ -198,7 +193,6 @@ public class Controller {
         pathTransition.setPath(tramPath);
         pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         pathTransition.setCycleCount(1);
-
         playButton.setOnAction(action -> {
             playButton.setDisable(true);
             pauseButton.setDisable(false);
@@ -210,6 +204,13 @@ public class Controller {
             pauseButton.setDisable(true);
             pathTransition.pause();
         });
+
+        pathTransition.onFinishedProperty().set(
+                (ActionEvent event) -> {
+                    playButton.setDisable(false);
+                    pauseButton.setDisable(true);
+                }
+        );
 
     }
 
@@ -226,10 +227,33 @@ public class Controller {
 
         tl.play();
     }
+    
+    public void setLightColor (TrafficColor color, int id) {
+        Shape target;
+        Color fxColor;
+        
+        switch (color) {
+            case RED: fxColor = Color.RED; break;
+            case GREEN: fxColor = Color.GREEN; break;
+            case YELLOW: fxColor = Color.YELLOW; break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + color);
+        }
+        
+        switch (id) {
+            case 0: target = light_0; break;
+            case 1: target = light_1; break;
+            case 2: target = light_2; break;
+            case 3: target = light_3; break;
+            case 4: target = light_4; break;
+            case 5: target = light_5; break;
+            case 6: target = light_6; break;
+            case 7: target = light_7; break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + id);
+        }
 
-    public void stopTram() {
+        target.setFill(fxColor);
     }
-
-
 
 }

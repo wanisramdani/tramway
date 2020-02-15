@@ -29,9 +29,6 @@
             <Path fx:id="tramPath">
                 <elements>
                     <!-- Right Side of tram path -->
-                    <MoveTo fx:id="endPoint" x="60.0" y="250" /> <!-- F  -->
-                    <ArcTo fx:id="leftArc" radiusX="30.0" radiusY="50" x="50.0" y="380.0" />
-
                             <!-- Section 0: West-South -->
                     <MoveTo fx:id="startPoint" x="50.0" y="380" />
                     <LineTo fx:id="startLine" x="300.0" y="380.0" /> <!-- A  -->
@@ -69,6 +66,9 @@
                     <MoveTo fx:id="startOfLastLine" x="300" y="250" />
                     <LineTo fx:id="endOfEastLine" x="60" y="250" />
 
+                    <MoveTo fx:id="endPoint" x="60.0" y="250" /> <!-- F  -->
+                    <ArcTo fx:id="leftArc" radiusX="30.0" radiusY="50" x="50.0" y="380.0" />
+
                 </elements>
             </Path>
 
@@ -84,7 +84,7 @@
                  </elements>
 
              </Path>
-            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" layoutX="45.0" layoutY="233.0" stroke="BLACK" strokeType="INSIDE" width="49.0" />
+            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" layoutX="50.0" layoutY="360.0" stroke="BLACK" strokeType="INSIDE" width="49.0" />
             <Rectangle fx:id="AlphaCar" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="43.0" layoutX="1008.0" layoutY="452.0" stroke="BLACK" strokeType="INSIDE" width="30.0" />
             <Rectangle fx:id="BetaCar" arcHeight="5.0" arcWidth="5.0" fill="#770ec3" height="43.0" layoutX="958.0" layoutY="122.0" stroke="BLACK" strokeType="INSIDE" width="30.0" />
             <Button fx:id="playButton" layoutX="431.0" layoutY="591.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="49.0" text="Play" />
