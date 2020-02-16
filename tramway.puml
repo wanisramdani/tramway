@@ -1,17 +1,33 @@
 @startuml tramway
 
-class WorldView {
-  segmentQueues: List
-  
-  redraw(): void
+class WorldController {
+  updateView(): void
 }
-WorldView -- WorldModel
-WorldView *-- "10" TrafficLight
+WorldController -- WorldModel
+WorldController -- WorldView
+
+class WorldView {
+  setLightColor(int lightId, TrafficColor color)
+
+  getGraphicSegment(int tramId): int
+
+  createTram(int tramId)
+  deleteTram(int tramId)
+  setTramDynamic(int tramId, boolean isDynamic)
+  setTramProgress(int tramId, Duration dur)
+  getTramProgress(int tramId): Duration
+}
 
 class WorldModel {
+  segmentQueues: List
+
+  perhapsCreateCar()
+
+  startAll()
+  stopAll()
 }
-WorldModel *-- "6" Tram
-WorldModel *-- "*" Car
+WorldModel *-- "5" Tram
+WorldModel *-- "0..6" Car
 WorldModel *-- "1" BridgeArbiter
 WorldModel *-- "1" IntersectionArbiter
 
@@ -34,6 +50,8 @@ abstract class Vehicle {
   dir: TrafficDirection
   canAdvance: Semaphore
 
+  getCode():int
+
   advance(): void
   enter(): void
   leave(): void
@@ -47,11 +65,6 @@ Car --|> Vehicle
 Vehicle -- TrafficArbiter
 
 Vehicle --|> Thread
-
-class TrafficLight {
-  setColor(String c): void
-  getColor(): String
-}
 
 enum TrafficColor {
   GREEN
