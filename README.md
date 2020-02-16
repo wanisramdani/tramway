@@ -1,7 +1,37 @@
 # Tramway
 Concurrent Programming assignment
 
+Process-based simulation in Java/JavaFX à la MVC.
+
 ![UML class diagrams](tramway-uml.png)
+
+```java
+class WorldSimulation {
+
+  WorldModel worldModel;
+  WorldView worldModel;
+  WorldController worldController;
+
+  public WorldSimulation() {
+    worldModel = new WorldModel();
+    worldController = new WorldController(worlModel);
+    worldView = new WorldView(worldController);
+  }
+
+  void start() {
+    worldView.startAll();
+    worldModel.startAll();
+    worldController.startAll();
+  }
+
+  void stop() {
+    worldView.stopAll();
+    worldModel.stopAll();
+    worldController.startAll();
+  }
+
+}
+```
 
 ## Coding Style
 Follow [Google's Java style guide](https://google.github.io/styleguide/javaguide.html)
