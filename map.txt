@@ -1,16 +1,15 @@
 
-                                          [7:R]  [6:R]   (5:G) [4:R] 
-                                                              #      
-    +---<          >---+                  +---<          >----#----+ 
-   /     section3       \                /      section2      #     \
-  /                      \              /                     #     |
-  |                       +---<    >---+                      #     |
-  \                      /              \                     #     |
-   \      section0      /                \      section1      #     /
-    +---<          >---+                  +---<          >----#----+ 
-                                                              #      
-            [0:Y]  [1:R]                                 [2:R] (3:G) 
-
+                                     [9:R]..[8:Y]  (7:G).[6:R].....
+                                                       | |        .
+   +----------------+                +-----------------|-|---+    .
+  /    section3      \              /     section2     | |    \ [5:Y]
+ /                    \            /                   | |    |
+ |                     +----------+                    | |    |
+ \                    /            \                   | |    |
+  \     section0     /              \     section1     | |    /
+   +----------------+                +-----------------|-|---+ 
+                                                       | |       
+         [0:G]...[1:G]                [2:Y]........[3:R].(4:G) 
 
 LEGEND
 ======
@@ -18,3 +17,4 @@ LEGEND
 (i:c) Car traffic light; 'i' is the light's id and 'c' is its color
 Colors: R(ed), G(reen), Y(ellow)
 Trams: 'a' (lowercase means relative), 'A' (uppercase means dynamic)
+Dotted lines represent direct logical relations between lights
