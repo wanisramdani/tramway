@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,13 +13,22 @@ public class Main extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("worldview.fxml"));
         Parent root = fxmlLoader.load();
-        Controller ctrl = fxmlLoader.getController();
+        WorldView worldView = fxmlLoader.getController();
 
+        /*
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                // WorldController.updateView();
+            }
+        };
+        timer.start();
+        */
 
         Scene scene = new Scene(root, 1266, 678);
+        worldView.setLightColor(TrafficColor.GREEN, 7);
+        worldView.startAnimate();
 
-        ctrl.setLightColor(TrafficColor.GREEN, 7);
-        ctrl.setTramDynamic(0, true);
         primaryStage.setScene(scene);
         primaryStage.setTitle("TramwayFX");
         primaryStage.show();
