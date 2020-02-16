@@ -14,13 +14,15 @@ public class WorldModel {
      * - [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
      */
     List[] segmentQueues = {
-        Collections.synchronizedList(new ArrayList<Vehicle>()),
-        Collections.synchronizedList(new ArrayList<Vehicle>()),
-        Collections.synchronizedList(new ArrayList<Vehicle>()),
-        Collections.synchronizedList(new ArrayList<Vehicle>())
+        Collections.synchronizedList(new ArrayList<Tram>()),
+        Collections.synchronizedList(new ArrayList<Tram>()),
+        Collections.synchronizedList(new ArrayList<Tram>()),
+        Collections.synchronizedList(new ArrayList<Tram>())
     };
+    List<Car> carsGoingNorthQueue = Collections.synchronizedList(new ArrayList<>());
+    List<Car> carsGoingSouthQueue = Collections.synchronizedList(new ArrayList<>());
 
-    // TODO: Maybe create carsGoingNorthQueue and carsGoingSouthQueue?
+    boolean stopped = false;
 
     WorldModel() {
         bridgeArbiter = new BridgeArbiter();
@@ -28,13 +30,59 @@ public class WorldModel {
         // ...
     }
 
+    /**
+     * Named 'perhaps()' and not 'maybe()' to distinguish it from the Maybe monad.
+     * @return `true` 50% of the time
+     */
+    static boolean perhaps() {
+        return Math.random() < 0.50;
+    }
+
+    void perhapsCreateCar() {
+        if (perhaps() && carsGoingNorthQueue.size() < 3) {
+            Car x = new Car(this, TrafficDirection.NORTH);
+            carsGoingNorthQueue.add(x);
+            // worldWorld.addCar(x.getId(), TrafficDirection.NORTH);
+            // x.start();
+        }
+
+        if (perhaps() && carsGoingSouthQueue.size() < 3) {
+            Car x = new Car(this, TrafficDirection.SOUTH);
+            carsGoingSouthQueue.add(x);
+            // worldWorld.addCar(x.getId(), TrafficDirection.SOUTH);
+            // x.start();
+        }
+    }
+
     void startAll() {
-        // start randomCarGenerator thread maybe
+        // start randomCarGenerator thread
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        if (stopped) { this.cancel(); return; }
+                        perhapsCreateCar();
+                    }
+                },
+                0,
+                3000 // 3 sec
+        );
     }
 
     void stopAll() {
-        // for each vehicle in each section
-        // vehicle.interrupt();
+        for (List<Vehicle> queue : segmentQueues) {
+            for (Vehicle v : queue) {
+                v.interrupt();
+            }
+        }
+
+        for (List<Vehicle> queue : new List[]{carsGoingNorthQueue, carsGoingSouthQueue}) {
+            for (Vehicle v : queue) {
+                v.interrupt();
+            }
+        }
+
+        stopped = true;
     }
 
 }

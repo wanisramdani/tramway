@@ -2,12 +2,16 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public abstract class Vehicle extends Thread {
+    /** Used to generate codes */
+    static int count = 0;
+    private int code;
+
     /** Current direction */
     TrafficDirection dir;
 
     /**
-     * Used to wait for the animation to complete to progress to the next segment
-     *  `WorldView` should `canAdvance.release()` it
+     * Used to wait for the animation to complete before progressing to the next segment.
+     * `WorldController` should `canAdvance.release()` it once `worldView` finishes.
      */
     Semaphore canAdvance;
 
@@ -16,11 +20,18 @@ public abstract class Vehicle extends Thread {
     List[] segmentQueues;
 
     Vehicle(WorldModel worldMode) {
+        code = count++;
+
         bridgeArbiter = worldMode.bridgeArbiter;
         intersectionArbiter = worldMode.intersectionArbiter;
         segmentQueues = worldMode.segmentQueues;
 
+        // FIXME: Should it start with permits=1?
         canAdvance = new Semaphore(0);
+    }
+
+    int getCode() {
+        return code;
     }
 
     abstract void advance();
@@ -31,6 +42,8 @@ public abstract class Vehicle extends Thread {
         try {
             while (true) {
                 canAdvance.acquire();
+                // TODO: To add "dynamism", delay restarting by some random millis
+                // sleep((int)Math.random() * 1000);
                 advance();
                 // We were interrupted by World.stopAll() while we were busy
                 if (isInterrupted()) throw new InterruptedException();
@@ -38,14 +51,6 @@ public abstract class Vehicle extends Thread {
         } catch (InterruptedException e) {
             return;
         }
-    }
-
-    /**
-     * Named 'perhaps()' and not 'maybe()' to distinguish it from the Maybe monad.
-     * @return `true` 50% of the time
-     */
-    static boolean perhaps() {
-        return Math.random() < 50;
     }
 
 }

@@ -1,18 +1,10 @@
 public class Tram extends Vehicle {
 
-    static int count = 0;
+    /** logic segment */
     int segment = 0;
-
-    // Each tram has a code: 'A', 'B', ... 'Z'
-    private char code;
 
     public Tram(WorldModel worldMode) {
         super(worldMode);
-        code = (char) ('A' + count++);
-    }
-
-    char getCode() {
-        return code;
     }
 
     @Override
@@ -50,14 +42,6 @@ public class Tram extends Vehicle {
     @Override
     void leave() {
 
-    }
-
-    // TODO: How to calculate this?
-    // TODO: Maybe move to WorldView?
-    static double DURATION_PER_TRAM = 0.25;
-    double calculateDelta() {
-        int pos = segmentQueues[segment].indexOf(this) + 1;
-        return pos * DURATION_PER_TRAM;
     }
 
 }

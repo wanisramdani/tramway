@@ -7,6 +7,8 @@ import java.util.concurrent.Semaphore;
 public class IntersectionArbiter extends TrafficArbiter {
 
     int passingTrams = 0;
+    /** Only used for animation */
+    boolean isTramsTurn = false;
 
     Semaphore canGoNorth = new Semaphore(1, true), lightNorthSem = new Semaphore(1, true);
     Semaphore canGoSouth = new Semaphore(1, true), lightSouthSem = new Semaphore(1, true);
@@ -34,6 +36,7 @@ public class IntersectionArbiter extends TrafficArbiter {
                     v(mutex);
                     p(lightNorthSem);
                     p(lightSouthSem);
+                    isTramsTurn = true;
                 } else {
                     v(mutex);
                 }
@@ -70,6 +73,7 @@ public class IntersectionArbiter extends TrafficArbiter {
                     v(mutex);
                     v(lightNorthSem);
                     v(lightSouthSem);
+                    isTramsTurn = false;
                 } else {
                     v(mutex);
                 }

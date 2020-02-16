@@ -1,9 +1,8 @@
 public class Car extends Vehicle {
 
-    public Car(WorldModel worldMode) {
+    public Car(WorldModel worldMode, TrafficDirection dir) {
         super(worldMode);
-        // TODO: Direction should be determined by WorldController
-        dir = perhaps() ? TrafficDirection.NORTH : TrafficDirection.SOUTH;
+        this.dir = dir;
     }
 
     @Override
@@ -24,6 +23,7 @@ public class Car extends Vehicle {
         intersectionArbiter.releasePermit(dir);
     }
 
+    // TODO: Implement maybeCrash()
     /*
     void maybeCrash() throws InterruptedException {
         // 'shouldCrash' is set by WorldController when user clicks 'Crash Car'
