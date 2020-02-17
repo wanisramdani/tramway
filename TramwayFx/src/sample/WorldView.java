@@ -1,30 +1,29 @@
 package sample;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.PathTransition;
-import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.HashMap;
 
 
-public class WorldView {
+public class WorldView implements WorldViewInterface{
+    @FXML
+    public AnchorPane theWorld;
+    @FXML
+    public GridPane gridPane;
 
     public WorldView () {
     }
 
+    // Declaration
     @FXML
     private Path tramPath;
 
@@ -122,7 +121,6 @@ public class WorldView {
     @FXML
     private Path roadPath;
 
-
     @FXML
     private MoveTo southRoad;
 
@@ -205,17 +203,30 @@ public class WorldView {
     @FXML
     public Button resetButton;
 
+    final int tramSpeed = 10000;
 
+
+    HashMap<String, Wrapper> things = new HashMap<String, Wrapper>();
 
     PathTransition tramTransition = new PathTransition();
     PathTransition alphaCarTransition = new PathTransition();
     PathTransition betaCarTransition = new PathTransition();
-
-
     public PathTransition[] allTransitions = new PathTransition[]{tramTransition, alphaCarTransition, betaCarTransition};
 
+
+    @Override
+    public double getDeltaConstant() {
+        return 0;
+    }
+
+    @Override
+    public int getGraphicSegment(int tramId) {
+        return 0;
+    }
+
+
     public void startAnimate() {
-        setTramDynamic(2, true);
+        setTramDynamic(1, true);
 
         playButton.setOnAction(action -> {
             playButton.setDisable(true);
@@ -237,24 +248,28 @@ public class WorldView {
 
     }
 
+    @Override
     public void setTramDynamic(int tramId, boolean isDynamic) {
-        animatePath(alphaCarTransition, alphaCar, southToNorth, 1000);
-        animatePath(betaCarTransition, betaCar, northToSouth, 1000);
-        animatePath(tramTransition, tram, tramPath, 10000);
+        //animatePath(alphaCarTransition, alphaCar, southToNorth, 1000);
+        //animatePath(betaCarTransition, betaCar, northToSouth, 1000);
+        createTram(tramId);
+        createTram(tramId);
+        animatePath(things.get("tram1") , tramPath, 10000);
+
     }
 
-    public void animatePath(PathTransition pathTransition, Rectangle target, Path path, int targetSpeed) {
-        pathTransition.setDuration(Duration.millis(targetSpeed));
-        pathTransition.setNode(target);
-        pathTransition.setPath(path);
-        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+    public void animatePath(Wrapper t, Path path, int targetSpeed) {
+        t.pathTransition.setDuration(Duration.millis(targetSpeed));
+        t.pathTransition.setNode(t.shape);
+        t.pathTransition.setPath(path);
+        t.pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        t.pathTransition.play();
 
-        pathTransition.onFinishedProperty().set(
+        t.pathTransition.onFinishedProperty().set(
                 (ActionEvent event) -> {
-                    pathTransition.play();
+                    t.pathTransition.play();
                 }
         );
-
 
     }
 
@@ -279,15 +294,79 @@ public class WorldView {
         }
     }
 
-    public void setTramProgress(PathTransition pathTransition, int id, Duration duration) {
-        pathTransition.jumpTo(duration);
+    @Override
+    public void setTramProgress(int id, double duration) {
+        if (duration < 0) {
+            duration = duration + tramSpeed;
+        }
+
+        //jumpTo(Duration.millis(duration));
     }
 
-    public Duration getTramProgress(PathTransition pathTransition, int tramId) {
-        return pathTransition.getCurrentTime();
+    @Override
+    public void setTramProgress(int tramId, String namedDuration) {
+
     }
 
-    public void setLightColor(TrafficColor color, int id) {
+    @Override
+    public void createTram(int tramId) {
+        Rectangle r = new Rectangle();
+        r.setX(10);
+        r.setY(320);
+        r.setWidth(49);
+        r.setHeight(30);
+        r.setFill(Color.web("#2ddd0a"));
+        r.setStroke(Color.BLACK);
+        r.setStrokeType(StrokeType.INSIDE);
+        r.setId("tram_" + tramId);
+        r.setArcHeight(5);
+        r.setArcWidth(5);
+
+        gridPane.getChildren().add(r);
+        addTram(1, r);
+    }
+
+    public void addTram(int id, Rectangle rectangle) {
+        things.put("tram" + id, new Wrapper(rectangle, new PathTransition()));
+    }
+
+    @Override
+    public void deleteTram(int tramId) {
+
+    }
+
+    @Override
+    public void createCar(int carId, TrafficDirection dir) {
+
+    }
+
+    @Override
+    public void deleteCar(int carId) {
+
+    }
+
+    @Override
+    public void setCarDynamic(int carId, boolean isDynamic) {
+
+    }
+
+    @Override
+    public double getCarProgress(int carId) {
+        return 0;
+    }
+
+    @Override
+    public void setCarProgress(int carId, double dur) {
+
+    }
+
+    @Override
+    public double getTramProgress(int tramId) {
+        return Double.parseDouble( String.valueOf( things.get("tram_" + tramId).pathTransition.getCurrentTime() ) );
+    }
+
+    @Override
+    public void setLightColor(int id, TrafficColor color) {
         Shape target;
         Color fxColor;
 
@@ -314,5 +393,6 @@ public class WorldView {
 
         target.setFill(fxColor);
     }
+
 
 }

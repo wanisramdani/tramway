@@ -14,7 +14,6 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("worldview.fxml"));
         Parent root = fxmlLoader.load();
         WorldView worldView = fxmlLoader.getController();
-
         /*
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -26,7 +25,7 @@ public class Main extends Application {
         */
 
         Scene scene = new Scene(root, 1266, 678);
-        worldView.setLightColor(TrafficColor.GREEN, 7);
+        worldView.setLightColor(0, TrafficColor.GREEN);
         worldView.startAnimate();
 
         primaryStage.setScene(scene);
