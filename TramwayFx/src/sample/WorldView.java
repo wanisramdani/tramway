@@ -1,7 +1,9 @@
 package sample;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.PathTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -226,6 +228,7 @@ public class WorldView implements WorldViewInterface{
         createCar(0, TrafficDirection.NORTH);
         setCarDynamic(0, true);
 
+
         createCar(1, TrafficDirection.SOUTH);
         setCarDynamic(1, true);
 
@@ -400,7 +403,8 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public void deleteTram(int tramId) {
-        // Fade translation
+        gridPane.getChildren().remove(things.get("tram_" + tramId).shape);
+
     }
 
     @Override
@@ -440,7 +444,7 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public void deleteCar(int carId) {
-
+        gridPane.getChildren().remove(things.get("car_" + carId).shape);
     }
 
     @Override
