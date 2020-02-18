@@ -324,8 +324,13 @@ public class WorldView implements WorldViewInterface{
 
     public void playAll() {
         for (int i = 0; i < things.size(); i++) {
-            things.get("tram_" + i).pathTransition.play();
-            things.get("car_" + i).pathTransition.play();
+            if (things.get("tram_" + i) != null) {
+                things.get("tram_" + i).pathTransition.play();
+            }
+            if (things.get("car_" + i) != null) {
+                things.get("car_" + i).pathTransition.play();
+            }
+
         }
     }
 
@@ -333,17 +338,28 @@ public class WorldView implements WorldViewInterface{
         for (int i = 0; i < things.size(); i++) {
             status.setText("Duration: " + getTramProgress(i));
             //things.get("tram_" + i).pathTransition.pause();
-            setTramDynamic(i, false);
-            setCarDynamic(i, false);
+            if (things.get("tram_" + i) != null) {
+                //setTramDynamic(i, false);
+                things.get("tram_" + i).pathTransition.pause();
+            }
+            if (things.get("car_" + i) != null) {
+                //setCarDynamic(i, false);
+                things.get("car_" + i).pathTransition.pause();
+            }
             // System.out.println(getGraphicSegment(i));
+
         }
     }
 
     public void restAll() {
         for (int i = 0; i < things.size(); i++) {
             status.setText("Duration: 0ms");
-            things.get("tram_" + i).pathTransition.playFromStart();
-            things.get("car_" + i).pathTransition.playFromStart();
+            if (things.get("tram_" + i) != null) {
+                things.get("tram_" + i).pathTransition.playFromStart();
+            }
+            if (things.get("car_" + i) != null) {
+                things.get("car_" + i).pathTransition.playFromStart();
+            }
         }
     }
 
