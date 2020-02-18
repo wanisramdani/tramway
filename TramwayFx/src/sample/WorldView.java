@@ -336,15 +336,13 @@ public class WorldView implements WorldViewInterface{
 
     public void pauseAll() {
         for (int i = 0; i < things.size(); i++) {
-            //things.get("tram_" + i).pathTransition.pause();
             if (things.get("tram_" + i) != null) {
                 status.setText("Duration: " + getTramProgress(i));
-                //setTramDynamic(i, false);
-                things.get("tram_" + i).pathTransition.pause();
+                setTramDynamic(i, false);
             }
             if (things.get("car_" + i) != null) {
-                //setCarDynamic(i, false);
-                things.get("car_" + i).pathTransition.pause();
+                setCarDynamic(i, false);
+
             }
             // System.out.println(getGraphicSegment(i));
 

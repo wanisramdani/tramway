@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -86,7 +84,7 @@
                  </elements>
              </Path>
 
-             <Path fx:id="northToSouth">
+             <Path fx:id="northToSouth" opacity="0.0">
                  <elements>
 
                      <MoveTo fx:id="northRoad" x="970.0" y="110.0" />
@@ -95,7 +93,7 @@
                  </elements>
              </Path>
 
-             <Path fx:id="southToNorth">
+             <Path fx:id="southToNorth" opacity="0.0">
                  <elements>
                      <MoveTo fx:id="southRoad" x="1023" y="480.0" />
                      <LineTo fx:id="goNorth" x="1023" y="100.0" />
