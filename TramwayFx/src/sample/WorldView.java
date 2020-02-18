@@ -336,9 +336,9 @@ public class WorldView implements WorldViewInterface{
 
     public void pauseAll() {
         for (int i = 0; i < things.size(); i++) {
-            status.setText("Duration: " + getTramProgress(i));
             //things.get("tram_" + i).pathTransition.pause();
             if (things.get("tram_" + i) != null) {
+                status.setText("Duration: " + getTramProgress(i));
                 //setTramDynamic(i, false);
                 things.get("tram_" + i).pathTransition.pause();
             }
