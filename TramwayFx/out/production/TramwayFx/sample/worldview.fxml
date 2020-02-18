@@ -103,7 +103,8 @@
                  </elements>
              </Path>
 
-            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="49.0" x="28.0" y="365.0" />
+<!--            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="49.0" x="28.0" y="365.0" />
+-->
             <Rectangle fx:id="alphaCar" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="30.0" rotate="90.0" stroke="BLACK" strokeType="INSIDE" width="43.0" x="1002.0" y="480.0" />
             <Rectangle fx:id="betaCar" arcHeight="5.0" arcWidth="5.0" fill="#770ec3" height="30.0" rotate="90.0" stroke="BLACK" strokeType="INSIDE" width="43.0" x="948.0" y="100.0" />
 

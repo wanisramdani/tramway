@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.HashMap;
 
@@ -203,7 +204,7 @@ public class WorldView implements WorldViewInterface{
     @FXML
     public Button resetButton;
 
-    final int tramSpeed = 10000;
+    final int TRAMSPEED = 10000;
 
 
     HashMap<String, Wrapper> things = new HashMap<String, Wrapper>();
@@ -213,19 +214,9 @@ public class WorldView implements WorldViewInterface{
     PathTransition betaCarTransition = new PathTransition();
     public PathTransition[] allTransitions = new PathTransition[]{tramTransition, alphaCarTransition, betaCarTransition};
 
-
-    @Override
-    public double getDeltaConstant() {
-        return 0;
-    }
-
-    @Override
-    public int getGraphicSegment(int tramId) {
-        return 0;
-    }
-
-
     public void startAnimate() {
+        setTramDynamic(0, true);
+        setTramProgress(0, 1000);
         setTramDynamic(1, true);
 
         playButton.setOnAction(action -> {
@@ -248,22 +239,71 @@ public class WorldView implements WorldViewInterface{
 
     }
 
+    // Method requires tramId as parameter
+    @Override
+    public double getDeltaConstant() {
+        return TRAMSPEED - getTramProgress(0);
+    }
+
+    // There is miscalculation: error caused by getTramProgress, it returns Uncovered interval
+    @Override
+    public int getGraphicSegment(int tramId) {
+        double dur = getTramProgress(tramId);
+        for (int i = 0; i < 4; i++) {
+            double start = getCuePoint("segment_" + i + "_start");
+            double end = getCuePoint("segment_" + i + "_end");
+            System.out.println(start + " " + end);
+            if (dur >= start && dur <= end) {
+                return i;
+            }
+        }
+        throw new InvalidStateException("Uncovered interval: " + dur);
+    }
+
+    private double getCuePoint(String s) {
+        switch (s) {
+            case "segment_0_start":
+                return startPoint.getX();
+            case "segment_0_end":
+                return startLine.getX();
+
+            case "segment_1_start":
+                return endOfEastSouthCross.getX();
+            case "segment_1_end":
+                return endOfWestLine.getX();
+
+            case "segment_2_start":
+                return startOfEastSide.getX();
+            case "segment_2_end":
+                return eastLine.getX();
+
+            case "segment_3_start":
+                return startOfLastLine.getX();
+            case "segment_3_end":
+                return endOfEastLine.getX();
+
+        }
+
+        return 0.0;
+    }
+
+
+
     @Override
     public void setTramDynamic(int tramId, boolean isDynamic) {
         //animatePath(alphaCarTransition, alphaCar, southToNorth, 1000);
         //animatePath(betaCarTransition, betaCar, northToSouth, 1000);
         createTram(tramId);
-        createTram(tramId);
-        animatePath(things.get("tram1") , tramPath, 10000);
+        followPath(things.get("tram_" + tramId) , tramPath, TRAMSPEED);
 
     }
 
-    public void animatePath(Wrapper t, Path path, int targetSpeed) {
+
+    public void followPath(Wrapper t, Path path, int targetSpeed) {
         t.pathTransition.setDuration(Duration.millis(targetSpeed));
         t.pathTransition.setNode(t.shape);
         t.pathTransition.setPath(path);
         t.pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-        t.pathTransition.play();
 
         t.pathTransition.onFinishedProperty().set(
                 (ActionEvent event) -> {
@@ -274,34 +314,34 @@ public class WorldView implements WorldViewInterface{
     }
 
     public void playAll() {
-        // pathTransition is null
-        for (PathTransition pathTransition : allTransitions) {
-            pathTransition.play();
+        for (int i = 0; i < 2; i++) {
+            things.get("tram_" + i).pathTransition.play();
         }
     }
 
     public void pauseAll() {
-        for (PathTransition pathTransition : allTransitions) {
-            status.setText("Duration: " + pathTransition.getCurrentTime());
-            pathTransition.pause();
+        for (int i = 0; i < 2; i++) {
+            status.setText("Duration: " + getTramProgress(i));
+            things.get("tram_" + i).pathTransition.pause();
+            System.out.println(getGraphicSegment(i));
         }
     }
 
     public void restAll() {
-        for (PathTransition pathTransition : allTransitions) {
+        for (int i = 0; i < 2; i++) {
             status.setText("Duration: 0ms");
-            pathTransition.playFromStart();
+            things.get("tram_" + i).pathTransition.playFromStart();
         }
     }
 
     @Override
-    public void setTramProgress(int id, double duration) {
+    public void setTramProgress(int tramId, double duration) {
         if (duration < 0) {
-            duration = duration + tramSpeed;
+            duration = duration + TRAMSPEED;
         }
-
-        //jumpTo(Duration.millis(duration));
+        things.get("tram_" + tramId).pathTransition.jumpTo(Duration.millis(duration));
     }
+
 
     @Override
     public void setTramProgress(int tramId, String namedDuration) {
@@ -321,18 +361,14 @@ public class WorldView implements WorldViewInterface{
         r.setId("tram_" + tramId);
         r.setArcHeight(5);
         r.setArcWidth(5);
-
         gridPane.getChildren().add(r);
-        addTram(1, r);
+        things.put("tram_" + tramId, new Wrapper(r, new PathTransition()));
     }
 
-    public void addTram(int id, Rectangle rectangle) {
-        things.put("tram" + id, new Wrapper(rectangle, new PathTransition()));
-    }
 
     @Override
     public void deleteTram(int tramId) {
-
+        // Fade translation
     }
 
     @Override
@@ -362,7 +398,7 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public double getTramProgress(int tramId) {
-        return Double.parseDouble( String.valueOf( things.get("tram_" + tramId).pathTransition.getCurrentTime() ) );
+        return Double.parseDouble( String.valueOf( things.get("tram_" + tramId).pathTransition.getCurrentTime().toMillis() ) );
     }
 
     @Override
