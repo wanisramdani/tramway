@@ -104,10 +104,11 @@
              </Path>
 
 <!--            <Rectangle fx:id="tram" arcHeight="5.0" arcWidth="5.0" fill="#2ddd0a" height="30.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="49.0" x="28.0" y="365.0" />
--->
-            <Rectangle fx:id="alphaCar" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="30.0" rotate="90.0" stroke="BLACK" strokeType="INSIDE" width="43.0" x="1002.0" y="480.0" />
-            <Rectangle fx:id="betaCar" arcHeight="5.0" arcWidth="5.0" fill="#770ec3" height="30.0" rotate="90.0" stroke="BLACK" strokeType="INSIDE" width="43.0" x="948.0" y="100.0" />
 
+            <Rectangle fx:id="alphaCar" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="30.0" rotate="90.0" stroke="BLACK" strokeType="INSIDE" width="43.0" x="1002.0" y="480.0" />
+
+            <Rectangle fx:id="betaCar" arcHeight="5.0" arcWidth="5.0" fill="#770ec3" height="30.0" rotate="90.0" stroke="BLACK" strokeType="INSIDE" width="43.0" x="948.0" y="100.0" />
+-->
             <Rectangle fx:id="light_0" arcHeight="5.0" arcWidth="5.0" fill="#d5f200" height="25.0" layoutX="248.0" layoutY="389.0" stroke="BLACK" strokeType="INSIDE" width="22.0" />
             <Rectangle fx:id="light_1" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="25.0" layoutX="445.0" layoutY="334.0" stroke="BLACK" strokeType="INSIDE" width="22.0" />
             <Rectangle fx:id="light_7" arcHeight="5.0" arcWidth="5.0" fill="#f80000" height="25.0" layoutX="588.0" layoutY="263.0" stroke="BLACK" strokeType="INSIDE" width="22.0" />

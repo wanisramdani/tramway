@@ -205,8 +205,9 @@ public class WorldView implements WorldViewInterface{
     public Button resetButton;
 
     final int TRAMSPEED = 10000;
+    final int CARSPEED = 1000;
 
-
+    Path carPath;
     HashMap<String, Wrapper> things = new HashMap<String, Wrapper>();
 
     PathTransition tramTransition = new PathTransition();
@@ -215,9 +216,18 @@ public class WorldView implements WorldViewInterface{
     public PathTransition[] allTransitions = new PathTransition[]{tramTransition, alphaCarTransition, betaCarTransition};
 
     public void startAnimate() {
+        createTram(0);
         setTramDynamic(0, true);
         setTramProgress(0, 1000);
+
+        createTram(1);
         setTramDynamic(1, true);
+
+        createCar(0, TrafficDirection.NORTH);
+        setCarDynamic(0, true);
+
+        createCar(1, TrafficDirection.SOUTH);
+        setCarDynamic(1, true);
 
         playButton.setOnAction(action -> {
             playButton.setDisable(true);
@@ -252,9 +262,10 @@ public class WorldView implements WorldViewInterface{
         for (int i = 0; i < 4; i++) {
             double start = getCuePoint("segment_" + i + "_start");
             double end = getCuePoint("segment_" + i + "_end");
-            System.out.println(start + " " + end);
+            System.out.println(start + " " + end); // for debugging
             if (dur >= start && dur <= end) {
                 return i;
+
             }
         }
         throw new InvalidStateException("Uncovered interval: " + dur);
@@ -287,15 +298,13 @@ public class WorldView implements WorldViewInterface{
         return 0.0;
     }
 
-
-
     @Override
     public void setTramDynamic(int tramId, boolean isDynamic) {
-        //animatePath(alphaCarTransition, alphaCar, southToNorth, 1000);
-        //animatePath(betaCarTransition, betaCar, northToSouth, 1000);
-        createTram(tramId);
-        followPath(things.get("tram_" + tramId) , tramPath, TRAMSPEED);
-
+        if (isDynamic) {
+            followPath(things.get("tram_" + tramId), tramPath, TRAMSPEED);
+        } else {
+            things.get("tram_" + tramId).pathTransition.pause();
+        }
     }
 
 
@@ -314,23 +323,27 @@ public class WorldView implements WorldViewInterface{
     }
 
     public void playAll() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < things.size(); i++) {
             things.get("tram_" + i).pathTransition.play();
+            things.get("car_" + i).pathTransition.play();
         }
     }
 
     public void pauseAll() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < things.size(); i++) {
             status.setText("Duration: " + getTramProgress(i));
-            things.get("tram_" + i).pathTransition.pause();
-            System.out.println(getGraphicSegment(i));
+            //things.get("tram_" + i).pathTransition.pause();
+            setTramDynamic(i, false);
+            setCarDynamic(i, false);
+            // System.out.println(getGraphicSegment(i));
         }
     }
 
     public void restAll() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < things.size(); i++) {
             status.setText("Duration: 0ms");
             things.get("tram_" + i).pathTransition.playFromStart();
+            things.get("car_" + i).pathTransition.playFromStart();
         }
     }
 
@@ -346,6 +359,11 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void setTramProgress(int tramId, String namedDuration) {
 
+    }
+
+    @Override
+    public double getTramProgress(int tramId) {
+        return Double.parseDouble( String.valueOf( things.get("tram_" + tramId).pathTransition.getCurrentTime().toMillis() ) );
     }
 
     @Override
@@ -372,8 +390,38 @@ public class WorldView implements WorldViewInterface{
     }
 
     @Override
-    public void createCar(int carId, TrafficDirection dir) {
+    public void setCarDynamic(int carId, boolean isDynamic) {
+        if (isDynamic) {
+            followPath(things.get("car_" + carId), carPath, CARSPEED);
+        } else {
+            things.get("car_" + carId).pathTransition.pause();
+        }
+    }
 
+    @Override
+    public void createCar(int carId, TrafficDirection dir) {
+        Rectangle car = new Rectangle();
+        if (dir == TrafficDirection.NORTH) {
+            car.setX(0);
+            car.setY(310);
+            car.setFill(Color.DODGERBLUE);
+            carPath = southToNorth;
+        } else {
+            car.setX(0);
+            car.setY(330);
+            car.setFill(Color.web("#770ec3"));
+            carPath = northToSouth;
+        }
+        car.setWidth(43);
+        car.setHeight(30);
+        car.setRotate(90);
+        car.setStroke(Color.BLACK);
+        car.setStrokeType(StrokeType.INSIDE);
+        car.setId("car_" + carId);
+        car.setArcHeight(5);
+        car.setArcWidth(5);
+        gridPane.getChildren().add(car);
+        things.put("car_" + carId, new Wrapper(car, new PathTransition()));
     }
 
     @Override
@@ -382,24 +430,19 @@ public class WorldView implements WorldViewInterface{
     }
 
     @Override
-    public void setCarDynamic(int carId, boolean isDynamic) {
-
-    }
-
-    @Override
     public double getCarProgress(int carId) {
-        return 0;
-    }
-
-    @Override
-    public void setCarProgress(int carId, double dur) {
+        return Double.parseDouble( String.valueOf( things.get("car_" + carId).pathTransition.getCurrentTime().toMillis() ) );
 
     }
 
     @Override
-    public double getTramProgress(int tramId) {
-        return Double.parseDouble( String.valueOf( things.get("tram_" + tramId).pathTransition.getCurrentTime().toMillis() ) );
+    public void setCarProgress(int carId, double duration) {
+        if (duration < 0) {
+            duration = duration + CARSPEED;
+        }
+        things.get("car_" + carId).pathTransition.jumpTo(Duration.millis(duration));
     }
+
 
     @Override
     public void setLightColor(int id, TrafficColor color) {
