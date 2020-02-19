@@ -84,7 +84,7 @@
                  </elements>
              </Path>
 
-             <Path fx:id="northToSouth" opacity="0.0">
+             <Path fx:id="northToSouth">
                  <elements>
 
                      <MoveTo fx:id="northRoad" x="970.0" y="110.0" />
@@ -93,7 +93,7 @@
                  </elements>
              </Path>
 
-             <Path fx:id="southToNorth" opacity="0.0">
+             <Path fx:id="southToNorth">
                  <elements>
                      <MoveTo fx:id="southRoad" x="1023" y="480.0" />
                      <LineTo fx:id="goNorth" x="1023" y="100.0" />
