@@ -1,4 +1,3 @@
-import java.time.Duration;
 import java.util.List;
 
 public class WorldController implements WorldControllerInterface {
@@ -40,9 +39,10 @@ public class WorldController implements WorldControllerInterface {
         if (isFirstTram) {
           worldView.setTramDynamic(tram.getCode(), true);
         } else {
-          Duration followerProgress = worldView.getTramProgress(tram.getCode());
-          Duration leaderProgress = worldView.getTramProgress(previousTram.getCode());
-          Duration updatedProgress = calculateProgress(followerProgress, leaderProgress);
+          double followerProgress = worldView.getTramProgress(tram.getCode());
+          double leaderProgress = worldView.getTramProgress(previousTram.getCode());
+          double minDelta = worldView.getDeltaConstant();
+          double updatedProgress = calculateProgress(followerProgress, leaderProgress, minDelta);
           if (followerProgress != updatedProgress) worldView.setTramDynamic(tram.getCode(), false);
           worldView.setTramProgress(tram.getCode(), updatedProgress);
         }
@@ -63,15 +63,12 @@ public class WorldController implements WorldControllerInterface {
 
   }
 
-  // TODO: Instead of accepting and returning `Duration`s, work with `double` or `long`
-  Duration calculateProgress(Duration followerProgress, Duration leaderProgress) {
-    final long MIN_DELTA = Duration.ofSeconds(1).toMillis();
-
-    long diff = leaderProgress.toMillis() - followerProgress.toMillis();
-    if (diff > MIN_DELTA) {
+  double calculateProgress(double followerProgress, double leaderProgress, double minDelta) {
+    double diff = leaderProgress - followerProgress;
+    if (diff > minDelta) {
       return followerProgress;
     } else {
-      return Duration.ofMillis(leaderProgress.toMillis() - MIN_DELTA);
+      return leaderProgress - minDelta;
     }
   }
 
