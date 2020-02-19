@@ -128,56 +128,31 @@ public class WorldController implements WorldControllerInterface {
    * See map.txt
    */
   void updateLights() {
-    // TODO: Reduce the length of this method
-    //   Whatever L = (int i, TrafficColor c) -> worldView.setLightColor(i, c);
-    //   // 3 green -> 2 green -> 4 red
-    //   L(3, G); L(2, G); L(4, R);
-
+    // L
     TrafficColor G = TrafficColor.GREEN;
     TrafficColor R = TrafficColor.RED;
     TrafficColor Y = TrafficColor.YELLOW;
 
     if (worldModel.intersectionArbiter.isTramsTurn) {
-
-      // 3 green -> 2 green -> 4 red
-      worldView.setLightColor(3, G);
-      worldView.setLightColor(2, G);
-      worldView.setLightColor(4, R);
-
-      // 6 green -> 5 green -> 7 red
-      worldView.setLightColor(6, G);
-      worldView.setLightColor(5, G);
-      worldView.setLightColor(7, R);
+      L(3, G); L(2, G); L(4, R);
+      L(6, G); L(5, G); L(7, R);
     } else {
-      // 3 red -> 2 yellow -> 4 green
-      worldView.setLightColor(3, R);
-      worldView.setLightColor(2, Y);
-      worldView.setLightColor(4, G);
-
-      // 6 red -> 5 yellow -> 7 green
-      worldView.setLightColor(6, R);
-      worldView.setLightColor(5, Y);
-      worldView.setLightColor(7, G);
+      L(3, R); L(2, Y); L(4, G);
+      L(6, R); L(5, Y); L(7, G);
     }
 
-    if (worldModel.bridgeArbiter.turn == TrafficDirection.WEST) {
-      // 1 green -> 0 green
-      worldView.setLightColor(1, G);
-      worldView.setLightColor(0, G);
-
-      // 9 red -> 8 yellow
-      worldView.setLightColor(9, R);
-      worldView.setLightColor(8, Y);
-    } else { // turn = EAST
-      // 1 red -> 0 yellow
-      worldView.setLightColor(1, R);
-      worldView.setLightColor(0, Y);
-
-      // 9 green -> 8 green
-      worldView.setLightColor(9, G);
-      worldView.setLightColor(8, G);
+    if (worldModel.bridgeArbiter.turn == TrafficDirection.EAST) {
+      L(1, G); L(0, G);
+      L(9, R); L(8, Y);
+    } else { // turn = WEST
+      L(1, R); L(0, Y);
+      L(9, G); L(8, G);
     }
 
+  }
+
+  void L(int i, TrafficColor c) {
+    worldView.setLightColor(i, c);
   }
 
 }
