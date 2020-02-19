@@ -245,7 +245,7 @@ public class WorldView implements WorldViewInterface{
         });
 
         resetButton.setOnAction(action -> {
-            playButton.setDisable(true);
+            playButton.setDisable(false);
             pauseButton.setDisable(false);
             restAll();
         });
