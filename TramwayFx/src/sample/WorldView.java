@@ -210,6 +210,7 @@ public class WorldView implements WorldViewInterface{
 
     final int TRAM_TOTAL_DURATION = 10000;
     static final int TRAM_DELTA = 250;
+    static final int CAR_DELTA = 150;
     final int CAR_TOTAL_DURATION  =  1000;
 
     Path carPath;
@@ -379,6 +380,7 @@ public class WorldView implements WorldViewInterface{
 
         vehicles.put("tram_" + tramId, w);
     }
+
     public void followPath(Wrapper t, Path path, int targetSpeed) {
         t.pathTransition.setDuration(Duration.millis(targetSpeed));
         t.pathTransition.setNode(t.shape);
@@ -409,13 +411,12 @@ public class WorldView implements WorldViewInterface{
     }
 
     // TODO: When deleting a car, `carColors.add` it back to the list
-    static ArrayList<Color> carColors = new ArrayList<Color>(Arrays.asList(new Color[]{
-            Color.DODGERBLUE,
+    static ArrayList<Color> carColors = new ArrayList<Color>(Arrays.asList(Color.DODGERBLUE,
             Color.web("#770ec3"),
             Color.ORANGE,
-            Color.GOLD,
+            Color.GOLD
             // ...
-    }));
+    ));
 
     @Override
     public void createCar(int carId, TrafficDirection dir) {
@@ -452,6 +453,7 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public void deleteCar(int carId) {
+        carColors.add((Color) vehicles.get("car_" + carId).shape.getFill()); // to return the popped color
         gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
         vehicles.remove("car_" + carId);
     }

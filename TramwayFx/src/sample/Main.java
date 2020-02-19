@@ -49,6 +49,9 @@ public class Main extends Application {
         worldView.setCarDynamic(1, true);
         worldView.setCarDynamic(1, false);
 
+        worldView.createCar(2, TrafficDirection.SOUTH);
+        worldView.setCarDynamic(2, true);
+        worldView.setCarProgress(2, WorldView.CAR_DELTA);
     }
 
     public static void main(String[] args) {
