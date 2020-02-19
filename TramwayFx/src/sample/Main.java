@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,13 +23,32 @@ public class Main extends Application {
         timer.start();
         */
 
+        worldView.addEventListeners();
         Scene scene = new Scene(root, 1266, 678);
-        worldView.setLightColor(0, TrafficColor.GREEN);
-        worldView.startAnimate();
-
         primaryStage.setScene(scene);
         primaryStage.setTitle("TramwayFX");
         primaryStage.show();
+
+        // TESTING
+        worldView.createTram(0);
+        worldView.setTramDynamic(0, true);
+        worldView.setTramDynamic(0, false);
+        worldView.setTramProgress(0, worldView.TRAM_DELTA);
+
+        worldView.createTram(1);
+        worldView.setTramDynamic(1, true);
+        worldView.setTramDynamic(1, false);
+        worldView.setTramProgress(1, 0);
+
+        worldView.createCar(0, TrafficDirection.NORTH);
+        worldView.setCarDynamic(0, true);
+        worldView.setCarDynamic(0, false);
+        worldView.setCarProgress(0, 100);
+
+        worldView.createCar(1, TrafficDirection.SOUTH);
+        worldView.setCarDynamic(1, true);
+        worldView.setCarDynamic(1, false);
+
     }
 
     public static void main(String[] args) {

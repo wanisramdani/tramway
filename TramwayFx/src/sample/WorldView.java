@@ -2,6 +2,7 @@ package sample;
 
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
+import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -214,33 +215,7 @@ public class WorldView implements WorldViewInterface{
     Path carPath;
     HashMap<String, Wrapper> vehicles  = new HashMap<String, Wrapper>();
 
-    PathTransition tramTransition = new PathTransition();
-    PathTransition alphaCarTransition = new PathTransition();
-    PathTransition betaCarTransition = new PathTransition();
-    public PathTransition[] allTransitions = new PathTransition[]{tramTransition, alphaCarTransition, betaCarTransition};
-
-    public void startAnimate() {
-        createTram(0);
-        setTramDynamic(0, true);
-        setTramDynamic(0, false);
-        setTramProgress(0, TRAM_DELTA);
-
-        createTram(1);
-        setTramDynamic(1, true);
-        setTramDynamic(1, false);
-        setTramProgress(1, 0);
-
-
-        createCar(0, TrafficDirection.NORTH);
-        setCarDynamic(0, true);
-
-        createCar(1, TrafficDirection.SOUTH);
-        setCarDynamic(1, true);
-
-        createCar(2, TrafficDirection.SOUTH);
-        setCarProgress(2, TRAM_DELTA / 10);
-        setCarDynamic(2, true);
-
+    public void addEventListeners() {
         playButton.setOnAction(action -> {
             playButton.setDisable(true);
             pauseButton.setDisable(false);
@@ -258,7 +233,6 @@ public class WorldView implements WorldViewInterface{
             pauseButton.setDisable(false);
             restAll();
         });
-
     }
 
     @Override
@@ -274,7 +248,7 @@ public class WorldView implements WorldViewInterface{
         ObservableMap<String, Duration> points = pt.getCuePoints();
         */
         double dur = getTramProgress(tramId);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             double start = getCuePoint("segment_" + i + "_start");
             double end = getCuePoint("segment_" + i + "_end");
             System.out.println(start + " " + end); // for debugging
@@ -288,24 +262,29 @@ public class WorldView implements WorldViewInterface{
     private double getCuePoint(String s) {
         switch (s) {
             case "segment_0_start":
-                return startPoint.getX();
+                return 0.0; //startPoint.getX();
             case "segment_0_end":
-                return startLine.getX();
+                return 1460.0; //startLine.getX();
 
             case "segment_1_start":
-                return endOfEastSouthCross.getX();
+                return 1460.0; //endOfEastSouthCross.getX();
             case "segment_1_end":
-                return endOfWestLine.getX();
+                return 3370.0; //endOfWestLine.getX();
 
             case "segment_2_start":
-                return startOfEastSide.getX();
+                return 3370; //startOfEastSide.getX();
             case "segment_2_end":
-                return eastLine.getX();
+                return 5160; //eastLine.getX();
 
             case "segment_3_start":
-                return startOfLastLine.getX();
+                return 5160; //startOfLastLine.getX();
             case "segment_3_end":
-                return endOfEastLine.getX();
+                return 6960; //endOfEastLine.getX();
+
+            case "segment_4_start":
+                return 6960;
+            case "segment_4_end":
+                return 10000;
 
         }
 
@@ -329,23 +308,21 @@ public class WorldView implements WorldViewInterface{
             if (vehicles.get("car_" + i) != null) {
                 vehicles.get("car_" + i).pathTransition.play();
             }
-
         }
     }
 
     public void pauseAll() {
         for (int i = 0; i < vehicles.size(); i++) {
             if (vehicles.get("tram_" + i) != null) {
-                status.setText("Duration: " + getTramProgress(i));
                 setTramDynamic(i, false);
             }
             if (vehicles.get("car_" + i) != null) {
                 setCarDynamic(i, false);
-
             }
-             System.out.println(getGraphicSegment(i));
-
+             System.out.println(vehicles.get("tram_" + 0 ).pathTransition.getCurrentTime() );
         }
+        status.setText("Duration: " + getTramProgress(0));
+        System.out.println(getGraphicSegment(0));
     }
 
     public void restAll() {
@@ -357,7 +334,6 @@ public class WorldView implements WorldViewInterface{
                 deleteCar(i);
             }
         }
-        startAnimate();
     }
 
     @Override
@@ -368,16 +344,19 @@ public class WorldView implements WorldViewInterface{
         vehicles.get("tram_" + tramId).pathTransition.jumpTo(Duration.millis(duration));
     }
 
-
     @Override
     public void setTramProgress(int tramId, String namedDuration) {
         // TODO
+        double where = getCuePoint(namedDuration);
+
     }
 
     @Override
     public double getTramProgress(int tramId) {
         return Double.parseDouble( String.valueOf( vehicles.get("tram_" + tramId).pathTransition.getCurrentTime().toMillis() ) );
     }
+    // getTramProgress(id): getCurrentTime() / TRAM_TOTAL_DURATION * 100;
+    // setTramProgress(id, percentage): getCurrentTime() / TRAM_TOTAL_DURATION * 100;
 
     @Override
     public void createTram(int tramId) {
@@ -418,7 +397,7 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void deleteTram(int tramId) {
         gridPane.getChildren().remove(vehicles.get("tram_" + tramId).shape);
-        vehicles.remove("tram_" + tramId);
+        //vehicles.remove("tram_" + tramId);
     }
 
     @Override
