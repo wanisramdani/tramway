@@ -404,7 +404,7 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void deleteTram(int tramId) {
         gridPane.getChildren().remove(vehicles.get("tram_" + tramId).shape);
-
+        vehicles.remove("tram_" + tramId);
     }
 
     @Override
@@ -445,6 +445,7 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void deleteCar(int carId) {
         gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
+        vehicles.remove("car_" + carId);
     }
 
     @Override
