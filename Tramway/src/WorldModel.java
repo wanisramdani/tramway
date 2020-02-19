@@ -27,7 +27,6 @@ public class WorldModel {
     WorldModel() {
         bridgeArbiter = new BridgeArbiter();
         intersectionArbiter = new IntersectionArbiter();
-        // ...
     }
 
     /**
@@ -42,20 +41,18 @@ public class WorldModel {
         if (perhaps() && carsGoingNorthQueue.size() < 3) {
             Car x = new Car(this, TrafficDirection.NORTH);
             carsGoingNorthQueue.add(x);
-            // worldWorld.addCar(x.getId(), TrafficDirection.NORTH);
-            // x.start();
+            x.start();
         }
 
         if (perhaps() && carsGoingSouthQueue.size() < 3) {
             Car x = new Car(this, TrafficDirection.SOUTH);
             carsGoingSouthQueue.add(x);
-            // worldWorld.addCar(x.getId(), TrafficDirection.SOUTH);
-            // x.start();
+            x.start();
         }
     }
 
     void startAll() {
-        // start randomCarGenerator thread
+        // start carGenerator
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override
@@ -67,6 +64,14 @@ public class WorldModel {
                 0,
                 3000 // 3 sec
         );
+
+        // TODO: Change to 6
+        for (int i = 0; i < 2; i++) {
+            Tram t = new Tram(this);
+            t.start();
+            segmentQueues[0].add(t);
+        }
+
     }
 
     void stopAll() {

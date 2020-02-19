@@ -18,11 +18,22 @@ public class WorldController implements WorldControllerInterface {
 
   @Override
   public void startAll() {
-    // ...
+    // start viewAutoUpdater
+    new java.util.Timer().schedule(
+        new java.util.TimerTask() {
+          @Override
+          public void run() {
+            updateView();
+          }
+        },
+        0,
+        250 // 0.25 sec
+    );
   }
 
   @Override
   public void stopAll() {
+    // cancel viewAutoUpdater
     // ...
   }
 
@@ -35,28 +46,45 @@ public class WorldController implements WorldControllerInterface {
         Tram tram = segmentQueue.get(i);
         int code = tram.getCode();
 
+        // Handle new trams
+        if (tram.virgin) {
+          tram.virgin = false;
+          worldView.createTram(code);
+        }
+
         // Handle "dynamic" and relative animations
         if (isFirstTram) {
-          worldView.setTramDynamic(tram.getCode(), true);
+          worldView.setTramDynamic(code, true);
         } else {
-          double followerProgress = worldView.getTramProgress(tram.getCode());
+          double followerProgress = worldView.getTramProgress(code);
           double leaderProgress = worldView.getTramProgress(previousTram.getCode());
           double minDelta = worldView.getDeltaConstant();
           double updatedProgress = calculateProgress(followerProgress, leaderProgress, minDelta);
-          if (followerProgress != updatedProgress) worldView.setTramDynamic(tram.getCode(), false);
-          worldView.setTramProgress(tram.getCode(), updatedProgress);
+          if (followerProgress != updatedProgress) {
+            worldView.setTramDynamic(code, false);
+            worldView.setTramProgress(code, updatedProgress);
+          } else {
+            worldView.setTramDynamic(code, true);
+          }
         }
         previousTram = tram;
 
         // Handle out-of-sync'ness of the model and view
         int logicSegment = tram.segment;
         int graphicSegment = worldView.getGraphicSegment(code);
-        if (logicSegment != graphicSegment) {
+        if (graphicSegment > logicSegment) {
           worldView.setTramDynamic(code, false);
           worldView.setTramProgress(code, "segment_" + logicSegment + "_end");
-          // It mean the tram's animation in this segment has finished. Let the tram thread resume.
+          // It means the tram's animation in this segment has finished. Let the tram thread resume.
           tram.canAdvance.release();
         }
+
+        // FIXME: Test for 100%
+        if (worldView.getTramProgress(code) >= 130) {
+          worldView.setTramProgress(code, "segment_0_start");
+          // It means the tram's animation in this segment has finished. Let the tram thread resume.
+          tram.canAdvance.release();
+       }
 
       }
     }
@@ -65,7 +93,7 @@ public class WorldController implements WorldControllerInterface {
 
   double calculateProgress(double followerProgress, double leaderProgress, double minDelta) {
     double diff = leaderProgress - followerProgress;
-    if (diff > minDelta) {
+    if (diff >= minDelta) {
       return followerProgress;
     } else {
       return leaderProgress - minDelta;
@@ -73,7 +101,25 @@ public class WorldController implements WorldControllerInterface {
   }
 
   void updateCars() {
-    // TODO
+
+    for (List<Car> segmentQueue: new List[]{worldModel.carsGoingNorthQueue, worldModel.carsGoingSouthQueue}) {
+      for (int i = 0; i < segmentQueue.size(); i++) {
+        Vehicle car = segmentQueue.get(i);
+        int code = car.getCode();
+
+        if (car.virgin) {
+          car.virgin = false;
+          worldView.createCar(code, car.dir);
+        }
+
+        // If both the animation and execution have finished, destroy it
+        if (/*car.getState() == Thread.State.TERMINATED &&*/ worldView.getCarProgress(code) >= 10) {
+          //segmentQueue.remove(car);
+          worldView.destroyCar(code);
+        }
+      }
+    }
+    
     // ...
   }
 

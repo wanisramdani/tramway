@@ -6,6 +6,12 @@ public abstract class Vehicle extends Thread {
     static int count = 0;
     private int code;
 
+    // Used for view only
+    boolean virgin;
+
+    /** logic segment */
+    int segment = 0;
+
     /** Current direction */
     TrafficDirection dir;
 
@@ -21,13 +27,14 @@ public abstract class Vehicle extends Thread {
 
     Vehicle(WorldModel worldMode) {
         code = count++;
+        virgin = true;
 
         bridgeArbiter = worldMode.bridgeArbiter;
         intersectionArbiter = worldMode.intersectionArbiter;
         segmentQueues = worldMode.segmentQueues;
 
         // FIXME: Should it start with permits=1?
-        canAdvance = new Semaphore(0);
+        canAdvance = new Semaphore(1);
     }
 
     int getCode() {
@@ -42,8 +49,7 @@ public abstract class Vehicle extends Thread {
         try {
             while (true) {
                 canAdvance.acquire();
-                // TODO: To add "dynamism", delay restarting by some random millis
-                // sleep((int)Math.random() * 1000);
+                delayAdvancing();
                 advance();
                 // We were interrupted by World.stopAll() while we were busy
                 if (isInterrupted()) throw new InterruptedException();
@@ -51,6 +57,11 @@ public abstract class Vehicle extends Thread {
         } catch (InterruptedException e) {
             return;
         }
+    }
+
+    /**  To add "dynamism", delay restarting by some random millis */
+    void delayAdvancing() throws InterruptedException {
+       sleep((int)Math.random() * 1000);
     }
 
 }

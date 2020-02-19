@@ -71,4 +71,6 @@ public interface WorldViewInterface {
 
     void setCarProgress(int carId, double dur);
 
+    void setCarProgress(int carId, String namedProgress);
+
 }

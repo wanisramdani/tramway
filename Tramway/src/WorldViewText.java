@@ -71,79 +71,59 @@ public class WorldViewText implements WorldViewInterface {
         TextPath.TRAM_START_POINT,
         TextPath.TRAM_PATH
     );
-    addVehicle(tramId, textVehicle);
+    createVehicle(tramId, textVehicle);
   }
 
   @Override
-  public void destroyTram(int id) {
-    vehiclesMap.get(id).ticker.cancel();
-    vehiclesMap.remove(id);
-  }
-
-  void addVehicle(int id, TextVehicle v) {
-    Wrapper wrapper = new Wrapper();
-
-    wrapper.textVehicle = v;
-
-    // Tick every half a second
-    Timer ticker = new Timer();
-    ticker.schedule(
-            new java.util.TimerTask() {
-              @Override
-              public void run() {
-                if (wrapper.isPaused) {
-                  return; // skip tick
-                } else {
-                  wrapper.textVehicle.setProgress(+1, true);
-                }
-              }
-            },
-            0,
-            500
-    );
-    wrapper.ticker = ticker;
-
-    vehiclesMap.put(id, wrapper);
+  public void destroyTram(int tramId) {
+    destroyVehicle(tramId);
   }
 
   @Override
   public void createCar(int carId, TrafficDirection dir) {
     TextVehicle textVehicle;
     if (dir == TrafficDirection.NORTH) {
-      textVehicle= new TextVehicle(
+      textVehicle = new TextVehicle(
               (char) ('a' + carId),
               TextPath.CAR_NORTH_START_POINT,
               TextPath.CAR_NORTH_PATH
       );
     } else {
-      textVehicle= new TextVehicle(
+      textVehicle = new TextVehicle(
               (char) ('a' + carId),
               TextPath.CAR_SOUTH_START_POINT,
               TextPath.CAR_SOUTH_PATH
       );
     }
 
-    addVehicle(carId, textVehicle);
+    createVehicle(carId, textVehicle);
   }
 
   @Override
   public void destroyCar(int carId) {
-
+    destroyVehicle(carId);
   }
 
   @Override
   public void setCarDynamic(int carId, boolean isDynamic) {
-
+    // TODO
   }
 
   @Override
   public double getCarProgress(int carId) {
+    // TODO
     return 0;
   }
 
   @Override
   public void setCarProgress(int carId, double dur) {
+    // TODO
 
+  }
+
+  @Override
+  public void setCarProgress(int carId, String namedProgress) {
+    // TODO
   }
 
   @Override
@@ -163,9 +143,10 @@ public class WorldViewText implements WorldViewInterface {
     return (double) vehiclesMap.get(tramId).textVehicle.getProgress();
   }
 
-  // TODO: Automatically calculate it from the path's "displacement points"
-  // TODO: Move to TextPath class?
-  final static double TOTAL_DURATION = 135.0;
+  // TODO: Automatically calculate TOTAL_DURATION from the path's "displacement points"
+  // TODO: Move to TextPath class
+  final static double TOTAL_DURATION = 130.0;
+
   @Override
   public void setTramProgress(int tramId, double progress) {
     if (progress < 0) {
@@ -175,12 +156,12 @@ public class WorldViewText implements WorldViewInterface {
   }
 
   @Override
-  public void setTramProgress(int tramId, String progressPoint) {
-    int segment = progressPoint.charAt(8);
+  public void setTramProgress(int tramId, String namedProgress) {
+    int segment = namedProgress.charAt(8) - '0';
     int progress;
-    if (progressPoint.endsWith("start")) {
+    if (namedProgress.endsWith("start")) {
       progress = TextPath.TRAM_PATH_SEGMENTS[segment][0];
-    } else { // end
+    } else { // "end"
       progress = TextPath.TRAM_PATH_SEGMENTS[segment][1];
     }
 
@@ -226,6 +207,37 @@ public class WorldViewText implements WorldViewInterface {
     });
   }
 
+  void createVehicle(int id, TextVehicle v) {
+    Wrapper wrapper = new Wrapper();
+
+    wrapper.textVehicle = v;
+
+    // Tick every half a second
+    Timer ticker = new Timer();
+    ticker.schedule(
+        new java.util.TimerTask() {
+          @Override
+          public void run() {
+            if (wrapper.isPaused) {
+              return; // skip tick
+            } else {
+              wrapper.textVehicle.setProgress(+1, true);
+            }
+          }
+        },
+        0,
+        150
+    );
+    wrapper.ticker = ticker;
+
+    vehiclesMap.put(id, wrapper);
+  }
+
+  void destroyVehicle(int id) {
+    vehiclesMap.get(id).ticker.cancel();
+    vehiclesMap.remove(id);
+  }
+
   void redraw() {
     String view = toAsciiView();
     if (fancy) {
@@ -235,15 +247,17 @@ public class WorldViewText implements WorldViewInterface {
     // PRINT
     System.out.println("\033\143"); // to clear the screen on Linux
     System.out.println(view);
-    TextVehicle v = vehiclesMap.get(0).textVehicle;
-    System.out.println(String.format(
-        "Tram %c progress=%d  point%s  graphicSegment=%d  mapIndex=%d",
+    // DEBUGGING
+    if (vehiclesMap.size() > 0) {
+      TextVehicle v = vehiclesMap.get(0).textVehicle;
+      System.out.println(String.format(
+          "Tram %c progress=%d  point%s  graphicSegment=%d  mapIndex=%d",
           v.letter, v.getProgress(), v.p.toString(), getGraphicSegment(0), toMapIndex(v.p)
-    ));
+      ));
+    }
   }
 
   String toAsciiView() {
-    // See https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html
     StringBuilder view = new StringBuilder(VIEW_TEMPLATE);
 
     // TRAMS & CARS
@@ -292,7 +306,6 @@ public class WorldViewText implements WorldViewInterface {
   }
 
   int toMapIndex(Point point) {
-    // FIXME: Correct?
     int MAP_WIDTH = 70;
     return MAP_WIDTH * point.y + point.x;
   }
@@ -403,28 +416,28 @@ class TextPath {
   static Point TRAM_START_POINT = new Point(3, 9);
   static Point[] TRAM_PATH = {
           // startToBridge
-          new Point(+18, 0), new Point(+3, -3),
+          new Point(+17, 0), new Point(+3, -3),
           // bridge
-          new Point(+12, 0),
+          new Point(+11, 0),
           // bridgeToIntersection
-          new Point(+3, +3), new Point(+19, 0),
+          new Point(+3, +3), new Point(+16, 0),
           // intersectionToIntersection
-          new Point(+6, 0), new Point(+1, -1), new Point(0, -4), new Point(-1, -1), new Point(-3, 0),
+          new Point(+8, 0), new Point(+1, -1), new Point(0, -4), new Point(-1, -1), new Point(-3, 0),
           // intersectionToBridgeReverse
-          new Point(-22, 0), new Point(-3, +3),
+          new Point(-21, 0), new Point(-3, +3),
           // bridgeReverse
-          new Point(-12, 0),
+          new Point(-11, 0),
           // bridgeReverseToStart
-          new Point(-3, -3), new Point(-18, 0),
-          new Point(-1, +1), new Point(-1, +1), new Point(0, +3), new Point(+1, +1), new Point(+1, -1)
+          new Point(-3, -3), new Point(-17, 0),
+          new Point(-1, +1), new Point(-1, +1), new Point(0, +2), new Point(+1, +1), new Point(+1, +1)
   };
 
   static int[][] TRAM_PATH_SEGMENTS =
         {
               {00, 21}, // startToBridge
-              {21, 55}, // bridge, bridgeToIntersection
-              {55, 70}, // intersectionToIntersection
-              {70, 135} // intersectionToBridgeReverse, bridgeReverse, bridgeReverseToStart
+              {21, 52}, // bridge, bridgeToIntersection
+              {52, 70}, // intersectionToIntersection
+              {70, 130} // intersectionToBridgeReverse, bridgeReverse, bridgeReverseToStart
         };
 
   // CAR
