@@ -251,7 +251,6 @@ public class WorldView implements WorldViewInterface{
         for (int i = 0; i < 5; i++) {
             double start = getCuePoint("segment_" + i + "_start");
             double end = getCuePoint("segment_" + i + "_end");
-            System.out.println(start + " " + end); // for debugging
             if (dur >= start && dur <= end) {
                 return i;
             }
@@ -285,10 +284,9 @@ public class WorldView implements WorldViewInterface{
                 return 6960;
             case "segment_4_end":
                 return 10000;
-
+            default: return 0.0;
         }
 
-        return 0.0;
     }
 
     @Override
@@ -319,7 +317,7 @@ public class WorldView implements WorldViewInterface{
             if (vehicles.get("car_" + i) != null) {
                 setCarDynamic(i, false);
             }
-             System.out.println(vehicles.get("tram_" + 0 ).pathTransition.getCurrentTime() );
+
         }
         status.setText("Duration: " + getTramProgress(0));
         System.out.println(getGraphicSegment(0));
@@ -348,6 +346,7 @@ public class WorldView implements WorldViewInterface{
     public void setTramProgress(int tramId, String namedDuration) {
         // TODO
         double where = getCuePoint(namedDuration);
+        vehicles.get("tram_" + tramId).pathTransition.jumpTo(Duration.millis(where));
 
     }
 
