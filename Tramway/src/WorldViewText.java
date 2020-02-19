@@ -7,6 +7,7 @@ public class WorldViewText implements WorldViewInterface {
     // FOR TESTING
 
     WorldViewText worldView = new WorldViewText();
+    //worldView.fancy = true;
     worldView.startAll();
 
     // Test lights
@@ -44,6 +45,7 @@ public class WorldViewText implements WorldViewInterface {
   HashMap<Integer, Character> lightsMap = new HashMap<>();
   HashMap<Integer, Wrapper> vehiclesMap = new HashMap<>();
   Timer redrawer;
+  boolean fancy = false;
 
   @Override
   public int getGraphicSegment(int id) {
@@ -225,7 +227,10 @@ public class WorldViewText implements WorldViewInterface {
   }
 
   void redraw() {
-    String view = toAsciiMap();
+    String view = toAsciiView();
+    if (fancy) {
+      view = toEmojiView(view);
+    }
 
     // PRINT
     System.out.println("\033\143"); // to clear the screen on Linux
@@ -237,7 +242,7 @@ public class WorldViewText implements WorldViewInterface {
     ));
   }
 
-  String toAsciiMap() {
+  String toAsciiView() {
     // See https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html
     StringBuilder view = new StringBuilder(VIEW_TEMPLATE);
 
@@ -258,6 +263,32 @@ public class WorldViewText implements WorldViewInterface {
     }
 
     return view.toString();
+  }
+
+  /** Map ascii characters to emoji (see the legend in `map.txt`) */
+  String toEmojiView(String asciiView) {
+    String view = asciiView
+        // replace color characters with hearts
+        // black, green, red, yellow heart
+        .replaceAll(":\\?", ":\uD83D\uDDA4️️️")
+        .replaceAll(":G", ":\uD83D\uDC9A️")
+        .replaceAll(":R", ":❤️")
+        .replaceAll(":Y", ":\uD83D\uDC9B️️")
+
+        // replace trams with tram emojis
+        .replaceAll("[A-Z]", "\uD83D\uDE8B️")
+        // replace cars with car emojis
+        .replaceAll("[a-z]", "\uD83D\uDE97️")
+
+        // replace the rail characters {'-', '+', '/', '|,' '\'} with black squares
+        .replaceAll("[+\\-\\\\/\\|]", "⬛️️")
+
+        // TODO: Use "[^Emoji]" or "[anyAsciiCharater]"
+        // replace the rest with white squares
+        .replaceAll("[0-9 .()\\[\\]\\:]", "⬜️")
+        ;
+        
+    return view;
   }
 
   int toMapIndex(Point point) {
