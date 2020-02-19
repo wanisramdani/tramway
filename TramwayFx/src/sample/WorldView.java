@@ -210,7 +210,7 @@ public class WorldView implements WorldViewInterface{
     final int CARSPEED = 1000;
 
     Path carPath;
-    HashMap<String, Wrapper> things = new HashMap<String, Wrapper>();
+    HashMap<String, Wrapper> vehicles  = new HashMap<String, Wrapper>();
 
     PathTransition tramTransition = new PathTransition();
     PathTransition alphaCarTransition = new PathTransition();
@@ -304,9 +304,9 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void setTramDynamic(int tramId, boolean isDynamic) {
         if (isDynamic) {
-            followPath(things.get("tram_" + tramId), tramPath, TRAMSPEED);
+            followPath(vehicles.get("tram_" + tramId), tramPath, TRAMSPEED);
         } else {
-            things.get("tram_" + tramId).pathTransition.pause();
+            vehicles.get("tram_" + tramId).pathTransition.pause();
         }
     }
 
@@ -326,24 +326,24 @@ public class WorldView implements WorldViewInterface{
     }
 
     public void playAll() {
-        for (int i = 0; i < things.size(); i++) {
-            if (things.get("tram_" + i) != null) {
-                things.get("tram_" + i).pathTransition.play();
+        for (int i = 0; i < vehicles.size(); i++) {
+            if (vehicles.get("tram_" + i) != null) {
+                vehicles.get("tram_" + i).pathTransition.play();
             }
-            if (things.get("car_" + i) != null) {
-                things.get("car_" + i).pathTransition.play();
+            if (vehicles.get("car_" + i) != null) {
+                vehicles.get("car_" + i).pathTransition.play();
             }
 
         }
     }
 
     public void pauseAll() {
-        for (int i = 0; i < things.size(); i++) {
-            if (things.get("tram_" + i) != null) {
+        for (int i = 0; i < vehicles.size(); i++) {
+            if (vehicles.get("tram_" + i) != null) {
                 status.setText("Duration: " + getTramProgress(i));
                 setTramDynamic(i, false);
             }
-            if (things.get("car_" + i) != null) {
+            if (vehicles.get("car_" + i) != null) {
                 setCarDynamic(i, false);
 
             }
@@ -353,15 +353,15 @@ public class WorldView implements WorldViewInterface{
     }
 
     public void restAll() {
-        for (int i = 0; i < things.size(); i++) {
-            status.setText("Duration: 0ms");
-            if (things.get("tram_" + i) != null) {
-                things.get("tram_" + i).pathTransition.playFromStart();
+        for (int i = 0; i < vehicles.size(); i++) {
+            if (vehicles.get("tram_" + i) != null) {
+                deleteTram(i);
             }
-            if (things.get("car_" + i) != null) {
-                things.get("car_" + i).pathTransition.playFromStart();
+            if (vehicles.get("car_" + i) != null) {
+                deleteCar(i);
             }
         }
+        startAnimate();
     }
 
     @Override
@@ -369,7 +369,7 @@ public class WorldView implements WorldViewInterface{
         if (duration < 0) {
             duration = duration + TRAMSPEED;
         }
-        things.get("tram_" + tramId).pathTransition.jumpTo(Duration.millis(duration));
+        vehicles.get("tram_" + tramId).pathTransition.jumpTo(Duration.millis(duration));
     }
 
 
@@ -380,7 +380,7 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public double getTramProgress(int tramId) {
-        return Double.parseDouble( String.valueOf( things.get("tram_" + tramId).pathTransition.getCurrentTime().toMillis() ) );
+        return Double.parseDouble( String.valueOf( vehicles.get("tram_" + tramId).pathTransition.getCurrentTime().toMillis() ) );
     }
 
     @Override
@@ -397,22 +397,22 @@ public class WorldView implements WorldViewInterface{
         r.setArcHeight(5);
         r.setArcWidth(5);
         gridPane.getChildren().add(r);
-        things.put("tram_" + tramId, new Wrapper(r, new PathTransition()));
+        vehicles.put("tram_" + tramId, new Wrapper(r, new PathTransition()));
     }
 
 
     @Override
     public void deleteTram(int tramId) {
-        gridPane.getChildren().remove(things.get("tram_" + tramId).shape);
+        gridPane.getChildren().remove(vehicles.get("tram_" + tramId).shape);
 
     }
 
     @Override
     public void setCarDynamic(int carId, boolean isDynamic) {
         if (isDynamic) {
-            followPath(things.get("car_" + carId), carPath, CARSPEED);
+            followPath(vehicles.get("car_" + carId), carPath, CARSPEED);
         } else {
-            things.get("car_" + carId).pathTransition.pause();
+            vehicles.get("car_" + carId).pathTransition.pause();
         }
     }
 
@@ -439,17 +439,17 @@ public class WorldView implements WorldViewInterface{
         car.setArcHeight(5);
         car.setArcWidth(5);
         gridPane.getChildren().add(car);
-        things.put("car_" + carId, new Wrapper(car, new PathTransition()));
+        vehicles.put("car_" + carId, new Wrapper(car, new PathTransition()));
     }
 
     @Override
     public void deleteCar(int carId) {
-        gridPane.getChildren().remove(things.get("car_" + carId).shape);
+        gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
     }
 
     @Override
     public double getCarProgress(int carId) {
-        return Double.parseDouble( String.valueOf( things.get("car_" + carId).pathTransition.getCurrentTime().toMillis() ) );
+        return Double.parseDouble( String.valueOf( vehicles.get("car_" + carId).pathTransition.getCurrentTime().toMillis() ) );
 
     }
 
@@ -458,7 +458,7 @@ public class WorldView implements WorldViewInterface{
         if (duration < 0) {
             duration = duration + CARSPEED;
         }
-        things.get("car_" + carId).pathTransition.jumpTo(Duration.millis(duration));
+        vehicles.get("car_" + carId).pathTransition.jumpTo(Duration.millis(duration));
     }
 
 
