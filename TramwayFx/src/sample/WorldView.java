@@ -210,7 +210,7 @@ public class WorldView implements WorldViewInterface{
 
     final int TRAM_TOTAL_DURATION = 10000;
     static final int TRAM_DELTA = 250;
-    static final int CAR_DELTA = 150;
+    static final int CAR_DELTA = 200;
     final int CAR_TOTAL_DURATION  =  1000;
 
     Path carPath;
@@ -404,7 +404,7 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void setCarDynamic(int carId, boolean isDynamic) {
         if (isDynamic) {
-            followPath(vehicles.get("car_" + carId), carPath, CAR_TOTAL_DURATION);
+            vehicles.get("car_" + carId).pathTransition.play();
         } else {
             vehicles.get("car_" + carId).pathTransition.pause();
         }

@@ -43,15 +43,25 @@ public class Main extends Application {
         worldView.createCar(0, TrafficDirection.NORTH);
         worldView.setCarDynamic(0, true);
         worldView.setCarDynamic(0, false);
-        worldView.setCarProgress(0, 100);
+        worldView.setCarProgress(0, 0);
+
+        worldView.createCar(3, TrafficDirection.NORTH);
+        worldView.setCarDynamic(3, true);
+        worldView.setCarDynamic(3, false);
+        worldView.setCarProgress(3, WorldView.CAR_DELTA);
 
         worldView.createCar(1, TrafficDirection.SOUTH);
         worldView.setCarDynamic(1, true);
         worldView.setCarDynamic(1, false);
+        worldView.setCarProgress(1, 0);
+
 
         worldView.createCar(2, TrafficDirection.SOUTH);
         worldView.setCarDynamic(2, true);
+        worldView.setCarDynamic(2, false);
         worldView.setCarProgress(2, WorldView.CAR_DELTA);
+
+
     }
 
     public static void main(String[] args) {
