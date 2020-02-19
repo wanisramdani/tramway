@@ -1,33 +1,14 @@
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 
 public class WorldViewText implements WorldViewInterface {
 
-  public static void main(String[] args) {
-    // FOR TESTING
-
-    WorldViewText worldView = new WorldViewText();
-    //worldView.fancy = true;
-    worldView.startAll();
-
-    // Test lights
-    worldView.setLightColor(1, TrafficColor.GREEN);
-    worldView.setLightColor(9, TrafficColor.RED);
-
-    // Test trams
-    worldView.createTram(0);
-    worldView.setTramDynamic(0, true);
-
-    worldView.createTram(1);
-    worldView.setTramProgress(1, -40);
-
-    // Test cars
-    worldView.createCar(2, TrafficDirection.NORTH);
-    worldView.createCar(3, TrafficDirection.SOUTH);
-  }
-
   final static String VIEW_TEMPLATE =
-          "                                     [9:R]..[8:Y] (7:G)....[6:R]...  \n" +
+      "                                     [9:R]..[8:Y] (7:G)....[6:R]...  \n" +
           "                                                       |  |       .  \n" +
           "                                                       |  |       .  \n" +
           "   +----------------+                +-----------------+--+--+    .  \n" +
@@ -42,10 +23,55 @@ public class WorldViewText implements WorldViewInterface {
           "         [0:G]...[1:G]                [2:Y].......[3:R]....(4:G)     \n" +
           "                                                                     " ;
 
-  HashMap<Integer, Character> lightsMap = new HashMap<>();
-  HashMap<Integer, Wrapper> vehiclesMap = new HashMap<>();
+  Map<Integer, Character> lightsMap = Collections.synchronizedMap(new HashMap<>());
+  Map<Integer, Wrapper> vehiclesMap = Collections.synchronizedMap(new HashMap<>());
   Timer redrawer;
   boolean fancy = false;
+
+  @Override
+  public void startAll() {
+
+    // Add placeholders for lights
+    for (int id = 0; id < 10; id++) {
+      lightsMap.put(id, '?');
+    }
+
+    // start "redrawer" (redraw timer)
+    redrawer = new Timer();
+    redrawer.schedule(
+        new java.util.TimerTask() {
+          @Override
+          public void run() {
+            redraw();
+          }
+        },
+        0,
+        250 // 0.25 sec
+    );
+
+  }
+
+  @Override
+  public void stopAll() {
+    redrawer.cancel();
+
+    // cancel all tickers
+    vehiclesMap.forEach((i, wrappedVehicle) -> {
+      wrappedVehicle.ticker.cancel();
+    });
+  }
+
+  @Override
+  public void setLightColor(int id, TrafficColor color) {
+    // e.g. GREEN::TrafficColor -> "GREEN"::String -> 'G'::char
+    char c = color.toString().charAt(0);
+    lightsMap.put(id, c);
+  }
+
+  @Override
+  public double getDeltaConstant() {
+    return DELTA_DURATION;
+  }
 
   @Override
   public int getGraphicSegment(int id) {
@@ -80,19 +106,58 @@ public class WorldViewText implements WorldViewInterface {
   }
 
   @Override
+  public void setTramDynamic(int tramId, boolean isDynamic) {
+    vehiclesMap.get(tramId).isPaused = !isDynamic;
+  }
+
+  @Override
+  public double getTramProgress(int tramId) {
+    return vehiclesMap.get(tramId).textVehicle.getProgress();
+  }
+
+  // TODO: Automatically calculate TOTAL_DURATION from the path's "displacement points"
+  // TODO: Move to TextPath class
+  final static double TOTAL_DURATION = 130.0;
+
+  // Min allowed difference in progress between two vehicles in the same segment
+  final static double DELTA_DURATION = 1.0;
+
+  @Override
+  public void setTramProgress(int tramId, double progress) {
+    if (progress < 0) {
+      progress = progress + TOTAL_DURATION;
+    }
+    vehiclesMap.get(tramId).textVehicle.setProgress((int) progress);
+  }
+
+  @Override
+  public void setTramProgress(int tramId, String namedProgress) {
+    // e.g. "segment_1_end" -> '1' -> 1
+    int segment = namedProgress.charAt(8) - '0';
+    int progress;
+    if (namedProgress.endsWith("start")) {
+      progress = TextPath.TRAM_PATH_SEGMENTS[segment][0];
+    } else { // "end"
+      progress = TextPath.TRAM_PATH_SEGMENTS[segment][1];
+    }
+
+    setTramProgress(tramId, progress);
+  }
+
+  @Override
   public void createCar(int carId, TrafficDirection dir) {
     TextVehicle textVehicle;
     if (dir == TrafficDirection.NORTH) {
       textVehicle = new TextVehicle(
-              (char) ('a' + carId),
-              TextPath.CAR_NORTH_START_POINT,
-              TextPath.CAR_NORTH_PATH
+          (char) ('a' + carId),
+          TextPath.CAR_NORTH_START_POINT,
+          TextPath.CAR_NORTH_PATH
       );
     } else {
       textVehicle = new TextVehicle(
-              (char) ('a' + carId),
-              TextPath.CAR_SOUTH_START_POINT,
-              TextPath.CAR_SOUTH_PATH
+          (char) ('a' + carId),
+          TextPath.CAR_SOUTH_START_POINT,
+          TextPath.CAR_SOUTH_PATH
       );
     }
 
@@ -106,105 +171,22 @@ public class WorldViewText implements WorldViewInterface {
 
   @Override
   public void setCarDynamic(int carId, boolean isDynamic) {
-    // TODO
+    vehiclesMap.get(carId).isPaused = !isDynamic;
   }
 
   @Override
   public double getCarProgress(int carId) {
-    // TODO
-    return 0;
+    return vehiclesMap.get(carId).textVehicle.getProgress();
   }
 
   @Override
   public void setCarProgress(int carId, double dur) {
-    // TODO
-
+    setTramProgress(carId, dur); // TODO: create setVehicleProgress
   }
 
   @Override
   public void setCarProgress(int carId, String namedProgress) {
-    // TODO
-  }
-
-  @Override
-  public void setLightColor(int id, TrafficColor color) {
-    // e.g. GREEN::TrafficColor -> "GREEN"::String -> 'G'::char
-    char c = color.toString().charAt(0);
-    lightsMap.put(id, c);
-  }
-
-  @Override
-  public void setTramDynamic(int tramId, boolean isDynamic) {
-    vehiclesMap.get(tramId).isPaused = !isDynamic;
-  }
-
-  @Override
-  public double getTramProgress(int tramId) {
-    return (double) vehiclesMap.get(tramId).textVehicle.getProgress();
-  }
-
-  // TODO: Automatically calculate TOTAL_DURATION from the path's "displacement points"
-  // TODO: Move to TextPath class
-  final static double TOTAL_DURATION = 130.0;
-
-  @Override
-  public void setTramProgress(int tramId, double progress) {
-    if (progress < 0) {
-      progress = progress + TOTAL_DURATION;
-    }
-    vehiclesMap.get(tramId).textVehicle.setProgress((int) progress);
-  }
-
-  @Override
-  public void setTramProgress(int tramId, String namedProgress) {
-    int segment = namedProgress.charAt(8) - '0';
-    int progress;
-    if (namedProgress.endsWith("start")) {
-      progress = TextPath.TRAM_PATH_SEGMENTS[segment][0];
-    } else { // "end"
-      progress = TextPath.TRAM_PATH_SEGMENTS[segment][1];
-    }
-
-    setTramProgress(tramId, progress);
-  }
-
-  final static double DELTA_DURATION = 1.0;
-  @Override
-  public double getDeltaConstant() {
-    return DELTA_DURATION;
-  }
-
-  @Override
-  public void startAll() {
-
-    // Add placeholders for lights
-    for (int id = 0; id < 10; id++) {
-      lightsMap.put(id, 'Y'); // should be '?'
-    }
-
-    // start "redrawer" (redraw timer)
-    redrawer = new Timer();
-    redrawer.schedule(
-            new java.util.TimerTask() {
-              @Override
-              public void run() {
-                redraw();
-              }
-            },
-            0,
-            250 // 0.25 sec
-    );
-
-  }
-
-  @Override
-  public void stopAll() {
-    redrawer.cancel();
-
-    // cancel all tickers
-    vehiclesMap.forEach((i, wrappedVehicle) -> {
-      wrappedVehicle.ticker.cancel();
-    });
+    throw new NotImplementedException(); // TODO
   }
 
   void createVehicle(int id, TextVehicle v) {
@@ -226,7 +208,7 @@ public class WorldViewText implements WorldViewInterface {
           }
         },
         0,
-        150
+        200
     );
     wrapper.ticker = ticker;
 
@@ -267,11 +249,10 @@ public class WorldViewText implements WorldViewInterface {
       view.setCharAt(viewIndex, v.letter);
     });
 
-    // LIGHT COLORS
+    // LIGHTS
     for (int lightId = 0; lightId < 10; lightId++) {
       // e.g. finds "1:?" (as in "[1:?]") to replace "?" (like "[1:G]")
       int viewIndex = view.indexOf(lightId + ":") + 2;
-      // System.out.println("lightId " + lightId + " at " + viewIndex);
       char c = lightsMap.get(lightId);
       view.setCharAt(viewIndex, c);
     }
@@ -301,7 +282,7 @@ public class WorldViewText implements WorldViewInterface {
         // replace the rest with white squares
         .replaceAll("[0-9 .()\\[\\]\\:]", "⬜️")
         ;
-        
+
     return view;
   }
 
@@ -348,7 +329,7 @@ class TextVehicle {
     setProgress(val, false);
   }
 
-  // FIXME: Should be `static`?
+  // FIXME: Should not be `static`?
   static Point calculateProgressPoint(Point[] path, Point startingPoint, int progressVal) {
     Point p = startingPoint.clone();
 
@@ -384,7 +365,7 @@ class TextVehicle {
   public String toString() {
     return String.format("%c(%d, %d)",
         letter, p.x, p.y
-       );
+    );
   }
 
 }
@@ -415,50 +396,50 @@ class TextPath {
 
   static Point TRAM_START_POINT = new Point(3, 9);
   static Point[] TRAM_PATH = {
-          // startToBridge
-          new Point(+17, 0), new Point(+3, -3),
-          // bridge
-          new Point(+11, 0),
-          // bridgeToIntersection
-          new Point(+3, +3), new Point(+16, 0),
-          // intersectionToIntersection
-          new Point(+8, 0), new Point(+1, -1), new Point(0, -4), new Point(-1, -1), new Point(-3, 0),
-          // intersectionToBridgeReverse
-          new Point(-21, 0), new Point(-3, +3),
-          // bridgeReverse
-          new Point(-11, 0),
-          // bridgeReverseToStart
-          new Point(-3, -3), new Point(-17, 0),
-          new Point(-1, +1), new Point(-1, +1), new Point(0, +2), new Point(+1, +1), new Point(+1, +1)
+      // startToBridge
+      new Point(+17, 0), new Point(+3, -3),
+      // bridge
+      new Point(+11, 0),
+      // bridgeToIntersection
+      new Point(+3, +3), new Point(+16, 0),
+      // intersectionToIntersection
+      new Point(+8, 0), new Point(+1, -1), new Point(0, -4), new Point(-1, -1), new Point(-3, 0),
+      // intersectionToBridgeReverse
+      new Point(-21, 0), new Point(-3, +3),
+      // bridgeReverse
+      new Point(-11, 0),
+      // bridgeReverseToStart
+      new Point(-3, -3), new Point(-17, 0),
+      new Point(-1, +1), new Point(-1, +1), new Point(0, +2), new Point(+1, +1), new Point(+1, +1)
   };
 
   static int[][] TRAM_PATH_SEGMENTS =
-        {
-              {00, 21}, // startToBridge
-              {21, 52}, // bridge, bridgeToIntersection
-              {52, 70}, // intersectionToIntersection
-              {70, 130} // intersectionToBridgeReverse, bridgeReverse, bridgeReverseToStart
-        };
+      {
+          {00, 21}, // startToBridge
+          {21, 52}, // bridge, bridgeToIntersection
+          {52, 70}, // intersectionToIntersection
+          {70, 130} // intersectionToBridgeReverse, bridgeReverse, bridgeReverseToStart
+      };
 
   // CAR
   static int[][] CAR_PATH_SEGMENTS =
-          {
-                {0, 2},
-                {2, 10},
-          };
+      {
+          {0, 2},
+          {2, 10},
+      };
 
   // CAR GOING NORTH
   static Point CAR_NORTH_START_POINT = new Point(57, 11);
   static Point[] CAR_NORTH_PATH = {
-          new Point(0, -2), // before intersection
-          new Point(0, -8)  // after intersection
+      new Point(0, -2), // before intersection
+      new Point(0, -8)  // after intersection
   };
 
   // CAR GOING SOUTH
   static Point CAR_SOUTH_START_POINT = new Point(56, 1);
   static Point[] CAR_SOUTH_PATH = {
-          new Point(0, +2), // before intersection
-          new Point(0, +8)  // after intersection
+      new Point(0, +2), // before intersection
+      new Point(0, +8)  // after intersection
   };
 
 }

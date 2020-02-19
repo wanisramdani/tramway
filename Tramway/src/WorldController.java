@@ -113,14 +113,16 @@ public class WorldController implements WorldControllerInterface {
         }
 
         // If both the animation and execution have finished, destroy it
-        if (/*car.getState() == Thread.State.TERMINATED &&*/ worldView.getCarProgress(code) >= 10) {
-          //segmentQueue.remove(car);
+        if (worldView.getCarProgress(code) >= 10) {
           worldView.destroyCar(code);
         }
       }
+
+      segmentQueue.removeIf((car) -> car.getState() == Thread.State.TERMINATED);
     }
-    
+
     // ...
+
   }
 
   /**

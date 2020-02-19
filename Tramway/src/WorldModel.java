@@ -8,10 +8,6 @@ public class WorldModel {
 
     /**
      * Used to calculate 'delta' of tram in each section (see the map)
-     *
-     * See:
-     * - Collections.syncronizedList(...)
-     * - [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
      */
     List[] segmentQueues = {
         Collections.synchronizedList(new ArrayList<Tram>()),
@@ -75,6 +71,8 @@ public class WorldModel {
     }
 
     void stopAll() {
+        stopped = true;
+
         for (List<Vehicle> queue : segmentQueues) {
             for (Vehicle v : queue) {
                 v.interrupt();
@@ -86,8 +84,6 @@ public class WorldModel {
                 v.interrupt();
             }
         }
-
-        stopped = true;
     }
 
 }
