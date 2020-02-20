@@ -1,0 +1,43 @@
+                                     [9:R]..[8:Y] (7:G)....[6:R]...  
+                                                       |ed|       .  
+                                                       |  |       .  
+   R----------------K                N-----------------MfcL--K    .  
+  /                  \              /                  |  |   J [5:Y]
+ S                    \P          O/                   |  |   |      
+ |                     C^^^^^^^^^^D                    |  |   |      
+ T                    /            \                   |  |   |      
+  \U                 /              \                  |  |   I      
+   A----------------B                E-----------------FgbG--H       
+                                                       |  |          
+                                                       |ha|          
+         [0:G]...[1:G]                [2:Y].......[3:R]....(4:G)     
+
+
+CAR_GOING_NORTH_SEGMENTS = {
+  0: a->b (enter)
+  1: c->d (nothing)
+  2: c->d (leave)
+}
+
+CAR_GOING_NORTH_SEGMENTS = {
+  0: e->f (enter)
+  1: f->g (nothing)
+  2: g->h (leave)
+}
+
+TRAM_SEGMENTS = {
+  1 : A, B, C (bridge::enter)
+  1': C, D (bridge::leave)
+  2 : D, E, F (intersection::enter)
+  2': F, G (intersection::leave)
+  3 : G, H, I, J, K, L (intersection::enter)
+  3': L, M (intersection::leave)
+  4 : M, N, O/D (bridge::enter)
+  4': O/D, P/C (bridge::leave)
+  5 : P, U/A (nothing)
+}
+
+class TextMap
+  Point toPoint(int index): new Point()
+  Point toPoint(char c): toPoint( MAP_MASK.indexOf(c) )
+  int toIndex(Point point)

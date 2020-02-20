@@ -3,8 +3,29 @@ Concurrent Programming assignment
 
 Process-based simulation in Java/JavaFX à la MVC (more like [MVP](https://stackoverflow.com/a/1317742) actually)
 
+## Table of Contents
+
+- [Problem](#problem)
+
+- [Approach](#approach)
+
+- [Algorithms](#algorithms)
+  - [Bridge crossing](#bridge-crossing)
+  - [Traffic intersection](#traffic-intersection)
+       
+- [Implementation](#implementation)
+  - [Classes](#classes)
+  - [JavaFX Animation](#javafx-animation)
+
+- [Notes](#notes)
+
+- [Screenshots](#screenshots)
+  - [WorldViewText: ASCII mode](#worldviewtext-ascii-mode)
+  - [WorldViewText: Emoji mode](#worldviewtext-emoji-mode)
+  - [WorldView: JavaFX](#worldview-javafx)
+
 ## Problem
-A traffic lights management system...
+A traffic-control system to manage traffic lights of trams and cars...
 
 ## Approach
 As can be seen in the screenshot below, a tram (starting from the bottom left side) pass by some "obstacles":
@@ -20,13 +41,27 @@ Passing by each of these "obstacles" requires executing a different algorithm. T
 ---
 
 The path the tram takes can be split into four segments:
-0. start to bridge
-1. bridge to intersection
-2. intersection to intersection
-3. intersection to bridge
+0. A-B: Starting point to bridge: Asks BridgeArbiter for permission to go **EAST**.
+1. B-C: Bridge to intersection: Tells IntersectionArbiter to stop cars and give only trams permission to cross.
+2. C-D: Intersection to intersection: : Tells IntersectionArbiter to stop cars and give only trams permission to cross.
+3. D-E: Intersection to bridge: Asks BridgeArbiter for permission to go **WEST**.
 
-If it's in segment 0 it asks the bridge abriter for permission to go east,
-...
+If it's in segment 0 it asks the bridge arbiter for permission to go east,
+```
+                                     [9:R]..[8:Y] (7:G)....[6:R]...  
+                                                       |  |       .  
+                                                       |  |       .  
+   +----------------+                +-----------------+--+D-+    .  
+  /                  \              /                  |  |   \ [5:Y]
+ /                    \            E                   |  |   |      
+ |                     ^^^^^^^^^^^^                    |  |   |      
+ \                    B            \                   |  |   |      
+  \                  /              \                  |  |   /      
+   +A---------------+                +----------------C+--+--+       
+                                                       |  |          
+                                                       |  |          
+         [0:G]...[1:G]                [2:Y].......[3:R]....(4:G)     
+```
 
 ## Algorithms
 
@@ -162,39 +197,19 @@ Tram::leave() {
 
 ## Implementation
 
+### Classes
 ![UML class diagrams](tramway-uml.png)
 
-```java
-class TramwaySimulation {
+- Each Tram and Car is has a thread.
 
-  WorldModel worldModel;
-  WorldView worldModel;
-  WorldController worldController;
+- WorldModel is responsible for creating the initial trams, and starting a timer that generates cars (heading north or south) randomly.
 
-  public TramwaySimulation() {
-    worldModel = new WorldModel();
-    worldController = new WorldController(worlModel);
-    worldView = new WorldView(worldController);
-  }
+- WorldController interpretes the WorldModel and updates the WorldView. This happens either at the request of the ModelView (in case of JavaFX, see below) or automatically every few millis.
 
-  void start() {
-    worldView.startAll();
-    worldModel.startAll();
-    worldController.startAll();
-  }
 
-  void stop() {
-    worldView.stopAll();
-    worldModel.stopAll();
-    worldController.startAll();
-  }
-
-}
-```
+_See the JavaDoc comments for a description of individual classes and methods._
 
 ### JavaFX Animation
-WANIS: Why? What problems? How do it work?
-
 - To actually animate `Tram`s and `Car`s on their paths, and to `play`, `pause`, and manually progress (`jumpTo`) animations: [PathTransition](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/PathTransition.html).
 
 - To update relative/paused trams: [AnimationTimer](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/AnimationTimer.html).
@@ -202,4 +217,15 @@ WANIS: Why? What problems? How do it work?
 ### Notes
 - Tried to follow [Google's Java style guide](https://google.github.io/styleguide/javaguide.html)
 
-- Use `Collections.syncronizedList(..)` with [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
+- Used `Collections.syncronizedList(..)` with [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html) to ensure thread-safety when manipulating vehicle queues in WorldModel.
+
+## Screenshots
+
+### WorldViewText: ASCII mode
+![tramway-ascii](./screenshots/tramway-ascii.png)
+
+### WorldViewText: Emoji mode
+![tramway-emoji](./screenshots/tramway-emoji.jpg)
+
+### WorldView: JavaFX
+![tramway-javafx](./screenshots/tramway-javafx.jpg)
