@@ -41,7 +41,17 @@ public class Main extends Application {
         worldView.createTram(1);
         worldView.setTramDynamic(1, true);
         worldView.setTramDynamic(1, false);
-        worldView.setTramProgress(1, 0);
+        worldView.setTramProgress(1, "segment_0_end");
+
+        worldView.createTram(2);
+        worldView.setTramDynamic(2, true);
+        worldView.setTramDynamic(2, false);
+        worldView.setTramProgress(2, "segment_2_end");
+
+        worldView.createTram(3);
+        worldView.setTramDynamic(3, true);
+        worldView.setTramDynamic(3, false);
+        worldView.setTramProgress(3, -worldView.getDeltaConstant());
 
         worldView.createCar(0, TrafficDirection.NORTH);
         worldView.setCarDynamic(0, true);

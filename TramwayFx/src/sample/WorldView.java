@@ -2,23 +2,19 @@ package sample;
 
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
-import javafx.animation.TranslateTransition;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import sun.plugin.dom.exception.InvalidStateException;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,13 +22,16 @@ import java.util.HashMap;
 
 
 public class WorldView implements WorldViewInterface{
+
+    public WorldView() {}
+
     @FXML
     public AnchorPane theWorld;
     @FXML
     public GridPane gridPane;
 
-    public WorldView () {
-    }
+    @FXML
+    public Hyperlink readMeOnGithub;
 
     // Declaration
     @FXML
@@ -222,8 +221,7 @@ public class WorldView implements WorldViewInterface{
     Path carPath;
     HashMap<String, Wrapper> vehicles  = new HashMap<String, Wrapper>();
 
-    public void addEventListeners() throws FileNotFoundException {
-
+    public void addEventListeners(){
         playButton.setOnAction(action -> {
             playButton.setDisable(true);
             pauseButton.setDisable(false);
@@ -248,7 +246,6 @@ public class WorldView implements WorldViewInterface{
         return TRAM_DELTA;
     }
 
-    // There is miscalculation: error caused by getTramProgress, it returns Uncovered interval
     @Override
     public int getGraphicSegment(int tramId) {
         /* CAN USE:
@@ -337,6 +334,7 @@ public class WorldView implements WorldViewInterface{
                 deleteCar(i);
             }
         }
+        vehicles.clear();
     }
 
     @Override
@@ -419,6 +417,8 @@ public class WorldView implements WorldViewInterface{
     ));
     static ArrayList<Image> carImage = new ArrayList<Image>(Arrays.asList(
             new Image("sample/resources/flatbed-covered.png"),
+            new Image("sample/resources/city-car.png"),
+            new Image("sample/resources/flatbed-covered.png"),
             new Image("sample/resources/city-car.png")
             // ...
     ));
@@ -459,7 +459,7 @@ public class WorldView implements WorldViewInterface{
     public void deleteCar(int carId) {
         //carColors.add((Color) vehicles.get("car_" + carId).shape.getFill()); // to return the popped color
         gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
-        vehicles.remove("car_" + carId);
+        //vehicles.remove("car_" + carId);
     }
 
     @Override

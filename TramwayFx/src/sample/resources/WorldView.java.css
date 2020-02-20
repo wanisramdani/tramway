@@ -8,6 +8,28 @@
     -fx-font-size: 24px ;
 }
 
+.btn {
+    -fx-border-color: transparent;
+    -fx-border-style: dotted;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: white;
+    -fx-font-size: 1em; /* 12 */
+}
+
+.btn:focused {
+    -fx-border-color: transparent, black;
+    -fx-border-width: 1, 1;
+    -fx-border-style: solid;
+    -fx-border-radius: 0, 0;
+    -fx-border-insets: 1 1 1 1, 0;
+}
+
+.btn:pressed {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
 .carPath {
     -fx-opacity: 0;
 }
@@ -17,4 +39,13 @@
     -fx-fill: #d0c0c085;
     -fx-border-style: dotted;
     -fx-stroke-dash-array: 5;
+}
+
+.title {
+    -fx-font-size: 90px ;
+}
+
+
+.header, .footer {
+    -fx-background-color: gainsboro;
 }
