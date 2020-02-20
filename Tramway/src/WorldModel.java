@@ -33,14 +33,25 @@ public class WorldModel {
         return Math.random() < 0.50;
     }
 
+    /**
+     * If there is free space for new cars, a call to this method may create a new car going north or south, 
+     * and then insert the new car into its respective queue.
+     */
     void perhapsCreateCar() {
-        if (perhaps() && carsGoingNorthQueue.size() < 3) {
+        // FIXME: WorldModel shouldn't care about representations at all.
+        //      Let WorldView worry about it (by recycling characters maybe?)
+        // Only create a car if we can find a lowercase character to represent it with
+        if (Vehicle.count > ('z' - 'a')) {
+            return;
+        }
+
+        if (perhaps() && carsGoingNorthQueue.size() < 2) {
             Car x = new Car(this, TrafficDirection.NORTH);
             carsGoingNorthQueue.add(x);
             x.start();
         }
 
-        if (perhaps() && carsGoingSouthQueue.size() < 3) {
+        if (perhaps() && carsGoingSouthQueue.size() < 2) {
             Car x = new Car(this, TrafficDirection.SOUTH);
             carsGoingSouthQueue.add(x);
             x.start();
@@ -61,8 +72,8 @@ public class WorldModel {
                 3000 // 3 sec
         );
 
-        // TODO: Change to 6
-        for (int i = 0; i < 2; i++) {
+        // TODO: Change to 5
+        for (int i = 0; i < 1; i++) {
             Tram t = new Tram(this);
             t.start();
             segmentQueues[0].add(t);

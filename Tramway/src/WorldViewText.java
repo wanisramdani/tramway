@@ -1,5 +1,3 @@
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,13 +6,13 @@ import java.util.Timer;
 public class WorldViewText implements WorldViewInterface {
 
   final static String VIEW_TEMPLATE =
-      "                                     [9:R]..[8:Y] (7:G)....[6:R]...  \n" +
+          "                                     [9:R]..[8:Y] (7:G)....[6:R]...  \n" +
           "                                                       |  |       .  \n" +
           "                                                       |  |       .  \n" +
           "   +----------------+                +-----------------+--+--+    .  \n" +
           "  /                  \\              /                  |  |   \\ [5:Y]\n" +
           " /                    \\            /                   |  |   |      \n" +
-          " |                     +----------+                    |  |   |      \n" +
+          " |                     ^^^^^^^^^^^^                    |  |   |      \n" +
           " \\                    /            \\                   |  |   |      \n" +
           "  \\                  /              \\                  |  |   /      \n" +
           "   +----------------+                +-----------------+--+--+       \n" +
@@ -26,7 +24,10 @@ public class WorldViewText implements WorldViewInterface {
   Map<Integer, Character> lightsMap = Collections.synchronizedMap(new HashMap<>());
   Map<Integer, Wrapper> vehiclesMap = Collections.synchronizedMap(new HashMap<>());
   Timer redrawer;
-  boolean fancy = false;
+
+  // TODO: Support different levels of "fancy": messages, ascii art, emoji, pixel art, etc.
+  /** Toggles emojiView mode */
+  boolean fancy = true;
 
   @Override
   public void startAll() {
@@ -117,9 +118,10 @@ public class WorldViewText implements WorldViewInterface {
 
   // TODO: Automatically calculate TOTAL_DURATION from the path's "displacement points"
   // TODO: Move to TextPath class
+  /** The total duration a vehicle needs to make a complete animation in its path */
   final static double TOTAL_DURATION = 130.0;
 
-  // Min allowed difference in progress between two vehicles in the same segment
+  /** Min allowed difference in progress between two vehicles in the same segment */
   final static double DELTA_DURATION = 1.0;
 
   @Override
@@ -186,7 +188,7 @@ public class WorldViewText implements WorldViewInterface {
 
   @Override
   public void setCarProgress(int carId, String namedProgress) {
-    throw new NotImplementedException(); // TODO
+    // TODO
   }
 
   void createVehicle(int id, TextVehicle v) {
@@ -277,6 +279,8 @@ public class WorldViewText implements WorldViewInterface {
 
         // replace the rail characters {'-', '+', '/', '|,' '\'} with black squares
         .replaceAll("[+\\-\\\\/\\|]", "⬛️️")
+        // replace the bridge characters
+        .replaceAll("\\^", "🌉️️")
 
         // TODO: Use "[^Emoji]" or "[anyAsciiCharater]"
         // replace the rest with white squares
@@ -415,10 +419,10 @@ class TextPath {
 
   static int[][] TRAM_PATH_SEGMENTS =
       {
-          {00, 21}, // startToBridge
-          {21, 52}, // bridge, bridgeToIntersection
-          {52, 70}, // intersectionToIntersection
-          {70, 130} // intersectionToBridgeReverse, bridgeReverse, bridgeReverseToStart
+          {00, 20}, // startToBridge
+          {20, 50}, // bridge, bridgeToIntersection
+          {50, 67}, // intersectionToIntersection
+          {67, 130} // intersectionToBridgeReverse, bridgeReverse, bridgeReverseToStart
       };
 
   // CAR
