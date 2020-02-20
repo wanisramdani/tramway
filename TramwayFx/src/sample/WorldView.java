@@ -349,10 +349,8 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public void setTramProgress(int tramId, String namedDuration) {
-        // TODO
         double where = getCuePoint(namedDuration);
         vehicles.get("tram_" + tramId).pathTransition.jumpTo(Duration.millis(where));
-
     }
 
     @Override
@@ -420,9 +418,7 @@ public class WorldView implements WorldViewInterface{
             // ...
     ));
     static ArrayList<Image> carImage = new ArrayList<Image>(Arrays.asList(
-            new Image("sample/resources/race-car.png"),
-            new Image("sample/resources/city-car.png"),
-            new Image("sample/resources/race-car.png"),
+            new Image("sample/resources/flatbed-covered.png"),
             new Image("sample/resources/city-car.png")
             // ...
     ));
@@ -444,11 +440,10 @@ public class WorldView implements WorldViewInterface{
             carPath = northToSouth;
         }
 
-        car.setWidth(43);
-        car.setHeight(30);
+        car.setWidth(40);
+        car.setHeight(50);
         car.setRotate(90);
-        car.setStroke(Color.BLACK);
-        car.setStrokeType(StrokeType.INSIDE);
+        //car.setStroke(Color.BLACK);car.setStrokeType(StrokeType.INSIDE);
         car.setId("car_" + carId);
         car.setArcHeight(5);
         car.setArcWidth(5);
@@ -463,7 +458,6 @@ public class WorldView implements WorldViewInterface{
     @Override
     public void deleteCar(int carId) {
         //carColors.add((Color) vehicles.get("car_" + carId).shape.getFill()); // to return the popped color
-        //carImage.add((Image) vehicles.get("car_" + carId).shape.getFill());
         gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
         vehicles.remove("car_" + carId);
     }

@@ -123,11 +123,10 @@
             <Line styleClass="trafficLine" endX="89.0" endY="0.5" layoutX="1131.0" layoutY="220.0" startX="-46.0" startY="0.5" />
             <Line styleClass="trafficLine" endX="146.0" endY="42.0" layoutX="1074.0" layoutY="221.0" startX="146.5" startY="-1.0" />
             <Line styleClass="trafficLine" endX="92.0" endY="-8.5" layoutX="689.0" layoutY="229.0" startX="-79.0" startY="46.5" />
-            <Text fx:id="status" layoutX="422.0" styleClass="trafficLine" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" wrappingWidth="254.41421508789062" />
+
             <Button fx:id="playButton" layoutX="443.0" layoutY="601.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" styleClass="btn" text="Play" />
             <Button fx:id="pauseButton" layoutX="526.0" layoutY="601.0" mnemonicParsing="false" styleClass="btn" text="Pause" />
             <Button fx:id="resetButton" layoutX="599.0" layoutY="601.0" mnemonicParsing="false" styleClass="btn" text="Reset" />
-
 
          </children>
 
