@@ -2,16 +2,19 @@ import java.util.concurrent.Semaphore;
 
 /**
  * Similar to La Circulation
- *  except you 'change lights' when a tram arrives, not when the "timer times out"
+ *  except you execute "Changement" when a tram arrives, not when the timer 'times out'
  */
 public class IntersectionArbiter extends TrafficArbiter {
 
-    int passingTrams = 0;
-    /** Only used for animation */
+    // Only used for animation
     boolean isTramsTurn = false;
 
-    Semaphore canGoNorth = new Semaphore(1, true), lightNorthSem = new Semaphore(1, true);
-    Semaphore canGoSouth = new Semaphore(1, true), lightSouthSem = new Semaphore(1, true);
+    int passingTrams = 0;
+
+    Semaphore canGoNorth = new Semaphore(1, true);
+    Semaphore lightNorthSem = new Semaphore(1, true);
+    Semaphore canGoSouth = new Semaphore(1, true);
+    Semaphore lightSouthSem = new Semaphore(1, true);
     Semaphore mutex = new Semaphore(1, true);
 
     @Override

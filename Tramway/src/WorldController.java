@@ -1,4 +1,3 @@
-import java.time.Duration;
 import java.util.List;
 
 public class WorldController implements WorldControllerInterface {
@@ -19,11 +18,22 @@ public class WorldController implements WorldControllerInterface {
 
   @Override
   public void startAll() {
-    // ...
+    // start viewAutoUpdater
+    new java.util.Timer().schedule(
+        new java.util.TimerTask() {
+          @Override
+          public void run() {
+            updateView();
+          }
+        },
+        0,
+        250 // 0.25 sec
+    );
   }
 
   @Override
   public void stopAll() {
+    // cancel viewAutoUpdater
     // ...
   }
 
@@ -36,48 +46,83 @@ public class WorldController implements WorldControllerInterface {
         Tram tram = segmentQueue.get(i);
         int code = tram.getCode();
 
+        // Handle new trams
+        if (tram.virgin) {
+          tram.virgin = false;
+          worldView.createTram(code);
+        }
+
         // Handle "dynamic" and relative animations
         if (isFirstTram) {
-          worldView.setTramDynamic(tram.getCode(), true);
+          worldView.setTramDynamic(code, true);
         } else {
-          Duration followerProgress = worldView.getTramProgress(tram.getCode());
-          Duration leaderProgress = worldView.getTramProgress(previousTram.getCode());
-          Duration updatedProgress = calculateProgress(followerProgress, leaderProgress);
-          if (followerProgress != updatedProgress) worldView.setTramDynamic(tram.getCode(), false);
-          worldView.setTramProgress(tram.getCode(), updatedProgress);
+          double followerProgress = worldView.getTramProgress(code);
+          double leaderProgress = worldView.getTramProgress(previousTram.getCode());
+          double minDelta = worldView.getDeltaConstant();
+          double updatedProgress = calculateProgress(followerProgress, leaderProgress, minDelta);
+          if (followerProgress != updatedProgress) {
+            worldView.setTramDynamic(code, false);
+            worldView.setTramProgress(code, updatedProgress);
+          } else {
+            worldView.setTramDynamic(code, true);
+          }
         }
         previousTram = tram;
 
         // Handle out-of-sync'ness of the model and view
         int logicSegment = tram.segment;
         int graphicSegment = worldView.getGraphicSegment(code);
-        if (logicSegment != graphicSegment) {
+        if (graphicSegment > logicSegment) {
           worldView.setTramDynamic(code, false);
           worldView.setTramProgress(code, "segment_" + logicSegment + "_end");
-          // It mean the tram's animation in this segment has finished. Let the tram thread resume.
+          // It means the tram's animation in this segment has finished. Let the tram thread resume.
           tram.canAdvance.release();
         }
+
+        // FIXME: Test for 100%
+        if (worldView.getTramProgress(code) >= 130) {
+          worldView.setTramProgress(code, "segment_0_start");
+          // It means the tram's animation in this segment has finished. Let the tram thread resume.
+          tram.canAdvance.release();
+       }
 
       }
     }
 
   }
 
-  // TODO: Instead of accepting and returning `Duration`s, work with `double` or `long`
-  Duration calculateProgress(Duration followerProgress, Duration leaderProgress) {
-    final long MIN_DELTA = Duration.ofSeconds(1).toMillis();
-
-    long diff = leaderProgress.toMillis() - followerProgress.toMillis();
-    if (diff > MIN_DELTA) {
+  double calculateProgress(double followerProgress, double leaderProgress, double minDelta) {
+    double diff = leaderProgress - followerProgress;
+    if (diff >= minDelta) {
       return followerProgress;
     } else {
-      return Duration.ofMillis(leaderProgress.toMillis() - MIN_DELTA);
+      return leaderProgress - minDelta;
     }
   }
 
   void updateCars() {
-    // TODO
+
+    for (List<Car> segmentQueue: new List[]{worldModel.carsGoingNorthQueue, worldModel.carsGoingSouthQueue}) {
+      for (int i = 0; i < segmentQueue.size(); i++) {
+        Vehicle car = segmentQueue.get(i);
+        int code = car.getCode();
+
+        if (car.virgin) {
+          car.virgin = false;
+          worldView.createCar(code, car.dir);
+        }
+
+        // If both the animation and execution have finished, destroy it
+        if (worldView.getCarProgress(code) >= 10) {
+          worldView.destroyCar(code);
+        }
+      }
+
+      segmentQueue.removeIf((car) -> car.getState() == Thread.State.TERMINATED);
+    }
+
     // ...
+
   }
 
   /**
@@ -85,56 +130,31 @@ public class WorldController implements WorldControllerInterface {
    * See map.txt
    */
   void updateLights() {
-    // TODO: Reduce the length of this method
-    //   Whatever L = (int i, TrafficColor c) -> worldView.setLightColor(i, c);
-    //   // 3 green -> 2 green -> 4 red
-    //   L(3, G); L(2, G); L(4, R);
-
+    // L
     TrafficColor G = TrafficColor.GREEN;
     TrafficColor R = TrafficColor.RED;
     TrafficColor Y = TrafficColor.YELLOW;
 
     if (worldModel.intersectionArbiter.isTramsTurn) {
-
-      // 3 green -> 2 green -> 4 red
-      worldView.setLightColor(3, G);
-      worldView.setLightColor(2, G);
-      worldView.setLightColor(4, R);
-
-      // 6 green -> 5 green -> 7 red
-      worldView.setLightColor(6, G);
-      worldView.setLightColor(5, G);
-      worldView.setLightColor(7, R);
+      L(3, G); L(2, G); L(4, R);
+      L(6, G); L(5, G); L(7, R);
     } else {
-      // 3 red -> 2 yellow -> 4 green
-      worldView.setLightColor(3, R);
-      worldView.setLightColor(2, Y);
-      worldView.setLightColor(4, G);
-
-      // 6 red -> 5 yellow -> 7 green
-      worldView.setLightColor(6, R);
-      worldView.setLightColor(5, Y);
-      worldView.setLightColor(7, G);
+      L(3, R); L(2, Y); L(4, G);
+      L(6, R); L(5, Y); L(7, G);
     }
 
-    if (worldModel.bridgeArbiter.turn == TrafficDirection.WEST) {
-      // 1 green -> 0 green
-      worldView.setLightColor(1, G);
-      worldView.setLightColor(0, G);
-
-      // 9 red -> 8 yellow
-      worldView.setLightColor(9, R);
-      worldView.setLightColor(8, Y);
-    } else { // turn = EAST
-      // 1 red -> 0 yellow
-      worldView.setLightColor(1, R);
-      worldView.setLightColor(0, Y);
-
-      // 9 green -> 8 green
-      worldView.setLightColor(9, G);
-      worldView.setLightColor(8, G);
+    if (worldModel.bridgeArbiter.turn == TrafficDirection.EAST) {
+      L(1, G); L(0, G);
+      L(9, R); L(8, Y);
+    } else { // turn = WEST
+      L(1, R); L(0, Y);
+      L(9, G); L(8, G);
     }
 
+  }
+
+  void L(int i, TrafficColor c) {
+    worldView.setLightColor(i, c);
   }
 
 }

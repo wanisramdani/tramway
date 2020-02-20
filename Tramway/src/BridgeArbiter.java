@@ -4,8 +4,10 @@ public class BridgeArbiter extends TrafficArbiter {
 
     TrafficDirection turn = TrafficDirection.WEST;
 
-    int goingWest = 0, goingEast = 0;
-    Semaphore canGoWest =  new Semaphore(0, true), canGoEast =  new Semaphore(0, true);
+    int goingWest = 0;
+    int goingEast = 0;
+    Semaphore canGoWest =  new Semaphore(0, true);
+    Semaphore canGoEast =  new Semaphore(0, true);
     Semaphore mutex = new Semaphore(1, true);
 
     /**

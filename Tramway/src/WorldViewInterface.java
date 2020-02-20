@@ -1,11 +1,14 @@
-import java.time.Duration;
-
 public interface WorldViewInterface {
+
+    void startAll();
+    void stopAll();
 
     /**
      * Change the light color of a square or circular traffic light
      */
     void setLightColor(int lightId, TrafficColor color);
+
+    double getDeltaConstant();
 
     // -------
 
@@ -14,23 +17,6 @@ public interface WorldViewInterface {
      */
     int getGraphicSegment(int tramId);
 
-    /*
-    // Something like:
-    int getGraphicSegment(int tramId) {
-      Duration dur = getTramProgress(tramId);
-
-      for (int i = 0; i < 4; i++) {
-        Duration start = getCuePoint("segment_" + i + "_start");
-        Duration end = getCuePoint("segment_" + i + "_end");
-        if (dur >= start && dur <= end) {
-          return i;
-        }
-      }
-
-      throw new InvalidStateException("Uncovered interval: " + dur);
-    }
-    */
-
     /**
      * Sets whether the animation should *progress* on its own ("dynamically")
      */
@@ -38,19 +24,20 @@ public interface WorldViewInterface {
 
     /**
      * Sets a specific animation progress point manually
-     * 
+     * Pattern: /^segment_(\d)_(start|end)$/
+     *
      * EXAMPLES:
      * setTramProgress(0, "segment_2_end");
      * setTramProgress(0, "segment_3_start");
      */
-    void setTramProgress(int tramId, String namedDuration);
+    void setTramProgress(int tramId, String namedProgress);
 
     /**
      * Sets a specific animation progress point manually
      */
-    void setTramProgress(int tramId, Duration dur);
+    void setTramProgress(int tramId, double dur);
 
-    Duration getTramProgress(int tramId);
+    double getTramProgress(int tramId);
 
     /**
      * Create a new tram visual representation, optionally starting from the first section
@@ -60,7 +47,7 @@ public interface WorldViewInterface {
     /**
      * Destroys or simply hides (to be recycled) the tram visual representation
      */
-    void deleteTram(int tramId);
+    void destroyTram(int tramId);
 
     // -------
 
@@ -76,12 +63,14 @@ public interface WorldViewInterface {
     /**
      * Destroys or simply hides (to be recycled) the car visual representation
      */
-    void deleteCar(int carId);
+    void destroyCar(int carId);
 
     void setCarDynamic(int carId, boolean isDynamic);
 
-    Duration getCarProgress(int carId);
+    double getCarProgress(int carId);
 
-    void setCarProgress(int carId, Duration dur);
+    void setCarProgress(int carId, double dur);
+
+    void setCarProgress(int carId, String namedProgress);
 
 }
