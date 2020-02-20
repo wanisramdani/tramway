@@ -14,15 +14,6 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("worldview.fxml"));
         Parent root = fxmlLoader.load();
         WorldView worldView = fxmlLoader.getController();
-        /*
-        AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                // WorldController.updateView();
-            }
-        };
-        timer.start();
-        */
 
         worldView.addEventListeners();
         Scene scene = new Scene(root, 1266, 678);
@@ -32,7 +23,23 @@ public class Main extends Application {
         primaryStage.setTitle("TramwayFX");
         primaryStage.show();
 
-        // TESTING
+        //test(worldView);
+
+        WorldModel worldModel = new WorldModel();
+        WorldController worldController = new WorldController(worldModel);
+        worldView.worldController = worldController;
+        worldController.worldView = worldView;
+
+        worldView.startAll();
+        worldController.startAll();
+        worldModel.startAll();
+
+
+    }
+
+    void test(WorldView worldView) {
+        worldView.shouldLoop = true;
+
         worldView.createTram(0);
         worldView.setTramDynamic(0, true);
         worldView.setTramDynamic(0, false);
@@ -62,9 +69,6 @@ public class Main extends Application {
         worldView.setCarDynamic(1, true);
         worldView.setCarDynamic(1, false);
         worldView.setCarProgress(1, 0);
-
-
-
     }
 
     public static void main(String[] args) {
