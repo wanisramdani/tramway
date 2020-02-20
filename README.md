@@ -12,7 +12,7 @@ Process-based simulation in Java/JavaFX à la MVC (more like [MVP](https://stack
 - [Algorithms](#algorithms)
   - [Bridge crossing](#bridge-crossing)
   - [Traffic intersection](#traffic-intersection)
-       
+
 - [Implementation](#implementation)
   - [Classes](#classes)
   - [JavaFX Animation](#javafx-animation)
@@ -218,6 +218,8 @@ _See the JavaDoc comments for a description of individual classes and methods._
 - Tried to follow [Google's Java style guide](https://google.github.io/styleguide/javaguide.html)
 
 - Used `Collections.syncronizedList(..)` with [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html) to ensure thread-safety when manipulating vehicle queues in WorldModel.
+
+- We call `worldController.updateView()` from the JavaFX's AnimationTimer because otherwise the WorldController cannot make changes to the WorldView: JavaFX's threads and objects can only be manipulated by/from another JavaFX thread.
 
 ## Screenshots
 
