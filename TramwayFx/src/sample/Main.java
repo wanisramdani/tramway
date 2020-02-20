@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -25,6 +26,8 @@ public class Main extends Application {
 
         worldView.addEventListeners();
         Scene scene = new Scene(root, 1266, 678);
+        scene.getStylesheets().add("sample/resources/WorldView.java.css");
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("TramwayFX");
         primaryStage.show();

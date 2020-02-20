@@ -22,6 +22,7 @@
       <RowConstraints />
    </rowConstraints>
    <children>
+
       <AnchorPane fx:id="theWorld" prefHeight="668.0" prefWidth="1266.0">
 
          <children>
@@ -84,7 +85,7 @@
                  </elements>
              </Path>
 
-             <Path fx:id="northToSouth">
+             <Path fx:id="northToSouth" styleClass="carPath">
                  <elements>
 
                      <MoveTo fx:id="northRoad" x="970.0" y="110.0" />
@@ -93,7 +94,7 @@
                  </elements>
              </Path>
 
-             <Path fx:id="southToNorth">
+             <Path fx:id="southToNorth" styleClass="carPath">
                  <elements>
                      <MoveTo fx:id="southRoad" x="1023" y="480.0" />
                      <LineTo fx:id="goNorth" x="1023" y="100.0" />
@@ -117,14 +118,15 @@
             <Rectangle fx:id="light_6" arcHeight="5.0" arcWidth="5.0" fill="#deff1f" height="25.0" layoutX="781.0" layoutY="208.0" stroke="BLACK" strokeType="INSIDE" width="22.0" />
             <Circle fx:id="downCarLight" fill="#1fff4e" layoutX="1051.0" layoutY="401.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fx:id="upCarLight" fill="#29d319" layoutX="949.0" layoutY="221.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-            <Line fx:id="linkZeroFirstLight" endX="187.0" endY="-62.5" fill="#d0c0c085" layoutX="258.0" layoutY="409.0" opacity="0.37" startX="12.0" startY="-7.5" />
-            <Line fx:id="linkSecondThirdLight" endX="194.0" endY="24.5" layoutX="726.0" layoutY="389.0" opacity="0.4" startX="88.0" startY="24.5" />
-            <Line fx:id="linkForthFifthLight" endX="146.0" endY="42.0" layoutX="1074.0" layoutY="221.0" opacity="0.41" startX="11.0" startY="-0.5" />
-            <Line fx:id="linkSixthSeventhLight" endX="92.0" endY="-8.5" layoutX="689.0" layoutY="229.0" opacity="0.38" startX="-79.0" startY="46.5" />
-            <Text fx:id="status" layoutX="422.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" wrappingWidth="254.41421508789062" />
-            <Button fx:id="playButton" layoutX="443.0" layoutY="601.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="49.0" text="Play" />
-            <Button fx:id="pauseButton" layoutX="526.0" layoutY="601.0" mnemonicParsing="false" text="Pause" />
-            <Button fx:id="resetButton" layoutX="599.0" layoutY="601.0" mnemonicParsing="false" text="Reset" />
+            <Line styleClass="trafficLine" endX="187.0" endY="-62.5" layoutX="258.0" layoutY="409.0" startX="12.0" startY="-7.5" />
+            <Line styleClass="trafficLine" endX="194.0" endY="24.5" layoutX="726.0" layoutY="389.0" startX="88.0" startY="24.5" />
+            <Line styleClass="trafficLine" endX="89.0" endY="0.5" layoutX="1131.0" layoutY="220.0" startX="-46.0" startY="0.5" />
+            <Line styleClass="trafficLine" endX="146.0" endY="42.0" layoutX="1074.0" layoutY="221.0" startX="146.5" startY="-1.0" />
+            <Line styleClass="trafficLine" endX="92.0" endY="-8.5" layoutX="689.0" layoutY="229.0" startX="-79.0" startY="46.5" />
+            <Text fx:id="status" layoutX="422.0" styleClass="trafficLine" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration" wrappingWidth="254.41421508789062" />
+            <Button fx:id="playButton" layoutX="443.0" layoutY="601.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" styleClass="btn" text="Play" />
+            <Button fx:id="pauseButton" layoutX="526.0" layoutY="601.0" mnemonicParsing="false" styleClass="btn" text="Pause" />
+            <Button fx:id="resetButton" layoutX="599.0" layoutY="601.0" mnemonicParsing="false" styleClass="btn" text="Reset" />
 
 
          </children>

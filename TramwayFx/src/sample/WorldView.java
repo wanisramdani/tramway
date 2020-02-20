@@ -7,14 +7,19 @@ import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import sun.plugin.dom.exception.InvalidStateException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -208,6 +213,7 @@ public class WorldView implements WorldViewInterface{
     @FXML
     public Button resetButton;
 
+
     final int TRAM_TOTAL_DURATION = 10000;
     static final int TRAM_DELTA = 250;
     static final int CAR_DELTA = 200;
@@ -216,7 +222,8 @@ public class WorldView implements WorldViewInterface{
     Path carPath;
     HashMap<String, Wrapper> vehicles  = new HashMap<String, Wrapper>();
 
-    public void addEventListeners() {
+    public void addEventListeners() throws FileNotFoundException {
+
         playButton.setOnAction(action -> {
             playButton.setDisable(true);
             pauseButton.setDisable(false);
@@ -318,10 +325,7 @@ public class WorldView implements WorldViewInterface{
             if (vehicles.get("car_" + i) != null) {
                 setCarDynamic(i, false);
             }
-
         }
-        status.setText("Duration: " + getTramProgress(0));
-        System.out.println(getGraphicSegment(0));
     }
 
     public void restAll() {
@@ -365,9 +369,8 @@ public class WorldView implements WorldViewInterface{
         r.setY(320);
         r.setWidth(49);
         r.setHeight(30);
-        r.setFill(Color.web("#2ddd0a"));
-        r.setStroke(Color.BLACK);
-        r.setStrokeType(StrokeType.INSIDE);
+        //r.setFill(Color.web("#2ddd0a")); r.setStroke(Color.BLACK); r.setStrokeType(StrokeType.INSIDE);
+        r.setFill(new ImagePattern(new Image("sample/resources/tram.png")));
         r.setId("tram_" + tramId);
         r.setArcHeight(5);
         r.setArcWidth(5);
@@ -410,28 +413,34 @@ public class WorldView implements WorldViewInterface{
         }
     }
 
-    // TODO: When deleting a car, `carColors.add` it back to the list
     static ArrayList<Color> carColors = new ArrayList<Color>(Arrays.asList(Color.DODGERBLUE,
             Color.web("#770ec3"),
             Color.ORANGE,
             Color.GOLD
             // ...
     ));
+    static ArrayList<Image> carImage = new ArrayList<Image>(Arrays.asList(
+            new Image("sample/resources/race-car.png"),
+            new Image("sample/resources/city-car.png"),
+            new Image("sample/resources/race-car.png"),
+            new Image("sample/resources/city-car.png")
+            // ...
+    ));
 
     @Override
     public void createCar(int carId, TrafficDirection dir) {
         Rectangle car = new Rectangle();
-        Color color = carColors.remove(0); // Like carColors.pop() if it were q queue
-
+        //Color color = carColors.remove(0); // Like carColors.pop() if it were q queue
+        Image carIcon = carImage.remove(0);
         if (dir == TrafficDirection.NORTH) {
             car.setX(0);
             car.setY(310);
-            car.setFill(color);
+            car.setFill(new ImagePattern(carIcon));
             carPath = southToNorth;
         } else {
             car.setX(0);
             car.setY(330);
-            car.setFill(color);
+            car.setFill(new ImagePattern(carIcon));
             carPath = northToSouth;
         }
 
@@ -453,7 +462,8 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public void deleteCar(int carId) {
-        carColors.add((Color) vehicles.get("car_" + carId).shape.getFill()); // to return the popped color
+        //carColors.add((Color) vehicles.get("car_" + carId).shape.getFill()); // to return the popped color
+        //carImage.add((Image) vehicles.get("car_" + carId).shape.getFill());
         gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
         vehicles.remove("car_" + carId);
     }

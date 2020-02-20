@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'bitpotion.medium.ttf';
+    src: url('bitpotion.medium.ttf');
+}
+
+* {
+    -fx-font-family: "bitpotion";
+    -fx-font-size: 24px ;
+}
+
+.carPath {
+    -fx-opacity: 0;
+}
+
+.trafficLine {
+    -fx-opacity: 0.41;
+    -fx-fill: #d0c0c085;
+    -fx-border-style: dotted;
+    -fx-stroke-dash-array: 5;
+}
