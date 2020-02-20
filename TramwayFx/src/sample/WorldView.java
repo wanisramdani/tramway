@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.event.ActionEvent;
@@ -15,18 +16,18 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import sun.plugin.dom.exception.InvalidStateException;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-
-public class WorldView implements WorldViewInterface{
+public class WorldView implements WorldViewInterface {
+    boolean shouldLoop = false;
 
     public WorldView() {}
 
     @FXML
     public AnchorPane theWorld;
+
     @FXML
     public GridPane gridPane;
 
@@ -212,6 +213,7 @@ public class WorldView implements WorldViewInterface{
     @FXML
     public Button resetButton;
 
+    WorldControllerInterface worldController;
 
     final int TRAM_TOTAL_DURATION = 10000;
     static final int TRAM_DELTA = 250;
@@ -328,10 +330,10 @@ public class WorldView implements WorldViewInterface{
     public void restAll() {
         for (int i = 0; i < vehicles.size(); i++) {
             if (vehicles.get("tram_" + i) != null) {
-                deleteTram(i);
+                destroyTram(i);
             }
             if (vehicles.get("car_" + i) != null) {
-                deleteCar(i);
+                destroyCar(i);
             }
         }
         vehicles.clear();
@@ -387,15 +389,17 @@ public class WorldView implements WorldViewInterface{
         t.pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
         t.pathTransition.setInterpolator(Interpolator.LINEAR);
 
-        t.pathTransition.onFinishedProperty().set(
-                (ActionEvent event) -> {
-                    t.pathTransition.play();
-                }
-        );
+        if (shouldLoop) {
+            t.pathTransition.onFinishedProperty().set(
+                    (ActionEvent event) -> {
+                        t.pathTransition.play();
+                    }
+            );
+        }
     }
 
     @Override
-    public void deleteTram(int tramId) {
+    public void destroyTram(int tramId) {
         gridPane.getChildren().remove(vehicles.get("tram_" + tramId).shape);
         //vehicles.remove("tram_" + tramId);
     }
@@ -409,11 +413,12 @@ public class WorldView implements WorldViewInterface{
         }
     }
 
-    static ArrayList<Color> carColors = new ArrayList<Color>(Arrays.asList(Color.DODGERBLUE,
+    static ArrayList<Color> carColors = new ArrayList<Color>(Arrays.asList(
+            Color.DODGERBLUE,
             Color.web("#770ec3"),
             Color.ORANGE,
-            Color.GOLD
-            // ...
+            Color.GOLD,
+            Color.AQUA
     ));
     static ArrayList<Image> carImage = new ArrayList<Image>(Arrays.asList(
             new Image("sample/resources/flatbed-covered.png"),
@@ -456,7 +461,7 @@ public class WorldView implements WorldViewInterface{
     }
 
     @Override
-    public void deleteCar(int carId) {
+    public void destroyCar(int carId) {
         //carColors.add((Color) vehicles.get("car_" + carId).shape.getFill()); // to return the popped color
         gridPane.getChildren().remove(vehicles.get("car_" + carId).shape);
         //vehicles.remove("car_" + carId);
@@ -464,7 +469,13 @@ public class WorldView implements WorldViewInterface{
 
     @Override
     public double getCarProgress(int carId) {
-        return vehicles.get("car_" + carId).pathTransition.getCurrentTime().toMillis();
+        Wrapper w = vehicles.get("car_" + carId);
+        //HACK
+        if (w == null) {
+            return CAR_TOTAL_DURATION;
+        } else {
+            return w.pathTransition.getCurrentTime().toMillis();
+        }
     }
 
     @Override
@@ -473,6 +484,31 @@ public class WorldView implements WorldViewInterface{
             duration = duration + CAR_TOTAL_DURATION;
         }
         vehicles.get("car_" + carId).pathTransition.jumpTo(Duration.millis(duration));
+    }
+
+    @Override
+    public void setCarProgress(int carId, String namedProgress) {
+        // TODO maybe
+    }
+
+    @Override
+    public void startAll() {
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                try {
+                    worldController.updateView();
+                } catch (Exception e ) {
+                    // OvO
+                }
+            }
+        };
+        timer.start();
+    }
+
+    @Override
+    public void stopAll() {
+        // NOTHING?
     }
 
     @Override
@@ -493,10 +529,12 @@ public class WorldView implements WorldViewInterface{
             case 1: target = light_1; break;
             case 2: target = light_2; break;
             case 3: target = light_3; break;
-            case 4: target = light_4; break;
-            case 5: target = light_5; break;
-            case 6: target = light_6; break;
-            case 7: target = light_7; break;
+            case 4: target = downCarLight; break;
+            case 5: target = light_4; break;
+            case 6: target = light_5; break;
+            case 7: target = upCarLight; break;
+            case 8: target = light_6; break;
+            case 9: target = light_7; break;
             default:
                 throw new IllegalStateException("Unexpected value: " + id);
         }
