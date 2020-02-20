@@ -13,7 +13,6 @@ public class TramwayText {
     worldModel = new WorldModel();
     worldView = new WorldViewText();
     worldController = new WorldController(worldModel);
-    // TODO: add setMVC(WorldModelInterface, WorldViewInterface, WorldControllerInterface)
     worldController.worldView = worldView;
   }
 

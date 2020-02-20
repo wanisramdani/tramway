@@ -103,22 +103,24 @@ public class WorldController implements WorldControllerInterface {
   void updateCars() {
 
     for (List<Car> segmentQueue: new List[]{worldModel.carsGoingNorthQueue, worldModel.carsGoingSouthQueue}) {
-      for (int i = 0; i < segmentQueue.size(); i++) {
-        Vehicle car = segmentQueue.get(i);
-        int code = car.getCode();
+      synchronized(segmentQueue) {
+        for (int i = 0; i < segmentQueue.size(); i++) {
+          Vehicle car = segmentQueue.get(i);
+          int code = car.getCode();
 
-        if (car.virgin) {
-          car.virgin = false;
-          worldView.createCar(code, car.dir);
+          if (car.virgin) {
+            car.virgin = false;
+            worldView.createCar(code, car.dir);
+          }
+
+          // If both the animation and execution have finished, destroy it
+          if (worldView.getCarProgress(code) >= 10) {
+            worldView.destroyCar(code);
+            segmentQueue.removeIf((c) -> c.getCode() == code);
+          }
         }
 
-        // If both the animation and execution have finished, destroy it
-        if (worldView.getCarProgress(code) >= 10) {
-          worldView.destroyCar(code);
-        }
       }
-
-      segmentQueue.removeIf((car) -> car.getState() == Thread.State.TERMINATED);
     }
 
     // ...
@@ -143,7 +145,7 @@ public class WorldController implements WorldControllerInterface {
       L(6, R); L(5, Y); L(7, G);
     }
 
-    if (worldModel.bridgeArbiter.turn == TrafficDirection.EAST) {
+    if (worldModel.bridgeArbiter.turn == TrafficDirection.WEST) {
       L(1, G); L(0, G);
       L(9, R); L(8, Y);
     } else { // turn = WEST

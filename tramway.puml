@@ -4,22 +4,25 @@ class WorldController {
   updateView(): void
 }
 WorldController -- WorldModel
-WorldController -- WorldView
+WorldController -- WorldViewInterface
 
-class WorldView {
+interface WorldViewInterface {
   setLightColor(int lightId, TrafficColor color)
 
-  getGraphicSegment(int tramId): int
-
   createTram(int tramId)
-  deleteTram(int tramId)
+  destroyTram(int tramId)
+  getGraphicSegment(int tramId): int
   setTramDynamic(int tramId, boolean isDynamic)
-  setTramProgress(int tramId, Duration dur)
-  getTramProgress(int tramId): Duration
+  getTramProgress(int tramId): double
+  setTramProgress(int tramId, double progress)
 }
+WorldViewInterface <|.. WorldViewFx
+WorldViewInterface <|.. WorldViewText
 
 class WorldModel {
-  segmentQueues: List
+  segmentQueues: List<Tram>[]
+  carsGoingNorth: List<Car>
+  carsGoingSouth: List<Car>
 
   perhapsCreateCar()
 
@@ -27,15 +30,16 @@ class WorldModel {
   stopAll()
 }
 WorldModel *-- "5" Tram
-WorldModel *-- "0..6" Car
+WorldModel *-- "0..4" Car
 WorldModel *-- "1" BridgeArbiter
 WorldModel *-- "1" IntersectionArbiter
 
 abstract class TrafficArbiter {
-  p(Semaphore x): void
-  v(Semaphore x): void
   getPermit(TrafficDirection dir): void
   releasePermit(TrafficDirection dir): void
+
+  p(Semaphore x): void
+  v(Semaphore x): void
 }
 
 class BridgeArbiter {
@@ -49,8 +53,8 @@ IntersectionArbiter --|> TrafficArbiter
 abstract class Vehicle {
   dir: TrafficDirection
   canAdvance: Semaphore
-
-  getCode():int
+  logicSegment: int
+  code: int
 
   advance(): void
   enter(): void

@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 public class IntersectionArbiter extends TrafficArbiter {
 
     // Only used for animation
-    boolean isTramsTurn = false;
+    boolean isTramsTurn = true;
 
     int passingTrams = 0;
 
@@ -24,11 +24,17 @@ public class IntersectionArbiter extends TrafficArbiter {
             case NORTH: /* CarGoingNorth::enter() */ {
                 p(canGoNorth);
                 p(lightNorthSem);
+
+                isTramsTurn = false;
+                return;
             }
 
             case SOUTH: /* CarGoingSouth::enter() */ {
                 p(canGoSouth);
                 p(lightSouthSem);
+
+                isTramsTurn = false;
+                return;
             }
 
             case EAST:

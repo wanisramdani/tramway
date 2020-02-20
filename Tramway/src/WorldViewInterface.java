@@ -1,6 +1,7 @@
 public interface WorldViewInterface {
 
     void startAll();
+
     void stopAll();
 
     /**
@@ -8,9 +9,13 @@ public interface WorldViewInterface {
      */
     void setLightColor(int lightId, TrafficColor color);
 
-    double getDeltaConstant();
 
-    // -------
+    // ============= TRAMS ============= 
+
+    /**
+     * The minimun difference in "progress" of any two trams in the same segment
+     */
+    double getDeltaConstant();
 
     /**
      * Returns the segment code the tram is visually ("graphically") in.
@@ -49,7 +54,8 @@ public interface WorldViewInterface {
      */
     void destroyTram(int tramId);
 
-    // -------
+
+    // ============= CARS ============= 
 
     /**
      * Create a new car visual representation, respecting the traffic direction

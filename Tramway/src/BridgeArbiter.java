@@ -2,7 +2,7 @@ import java.util.concurrent.Semaphore;
 
 public class BridgeArbiter extends TrafficArbiter {
 
-    TrafficDirection turn = TrafficDirection.WEST;
+    TrafficDirection turn = TrafficDirection.EAST;
 
     int goingWest = 0;
     int goingEast = 0;
