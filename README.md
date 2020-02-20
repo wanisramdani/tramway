@@ -1,55 +1,34 @@
 # Tramway
 Concurrent Programming assignment
 
-Process-based simulation in Java/JavaFX à la MVC.
+Process-based simulation in Java/JavaFX à la MVC (more like [MVP](https://stackoverflow.com/a/1317742) actually)
 
-![UML class diagrams](tramway-uml.png)
+## Problem
+A traffic lights management system...
 
-```java
-class WorldSimulation {
+## Approach
+As can be seen in the screenshot below, a tram (starting from the bottom left side) pass by some "obstacles":
+- The bridge
+- the intersection
+- the intersection again
+- and finally, the bridge again
 
-  WorldModel worldModel;
-  WorldView worldModel;
-  WorldController worldController;
+Passing by each of these "obstacles" requires executing a different algorithm. The tram needs to keep record of its current section to know what algorithm to execute.
 
-  public WorldSimulation() {
-    worldModel = new WorldModel();
-    worldController = new WorldController(worlModel);
-    worldView = new WorldView(worldController);
-  }
+`TrafficArbiter` classes (BridgeArbiter and IntersectionArbiter) are used to store shared state data and execute synchronization algorithms on behalf of vehicles (`Tram`s and `Car`s)
 
-  void start() {
-    worldView.startAll();
-    worldModel.startAll();
-    worldController.startAll();
-  }
+---
 
-  void stop() {
-    worldView.stopAll();
-    worldModel.stopAll();
-    worldController.startAll();
-  }
+The path the tram takes can be split into four segments:
+0. start to bridge
+1. bridge to intersection
+2. intersection to intersection
+3. intersection to bridge
 
-}
-```
+If it's in segment 0 it asks the bridge abriter for permission to go east,
+...
 
-## Coding Style
-Follow [Google's Java style guide](https://google.github.io/styleguide/javaguide.html)
-
-Document your code: [How to Write Doc Comments for the Javadoc Tool](https://www.oracle.com/technetwork/articles/java/index-137868.html)
-
-
-## JavaFX Animation
-- To actually animate `Car`s and `Tram`s: [PathTransition](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/PathTransition.html).
-
-- To `play`, `pause`, and manually progress (`jumpTo` or `playFrom`) animations: [Timeline](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/Timeline.html).
-
-- To update relative/paused trams: [AnimationTimer](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/AnimationTimer.html).
-
-- MAYBE to be notified of Trams' animation progress: [KeyFrame](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/KeyFrame.html) or maybe [ObservableList](https://docs.oracle.com/javase/8/javafx/api/javafx/collections/ObservableList.html).
-
-
-## Problems
+## Algorithms
 
 ### Bridge crossing
 
@@ -180,3 +159,47 @@ Tram::leave() {
   }
 }
 ```
+
+## Implementation
+
+![UML class diagrams](tramway-uml.png)
+
+```java
+class TramwaySimulation {
+
+  WorldModel worldModel;
+  WorldView worldModel;
+  WorldController worldController;
+
+  public TramwaySimulation() {
+    worldModel = new WorldModel();
+    worldController = new WorldController(worlModel);
+    worldView = new WorldView(worldController);
+  }
+
+  void start() {
+    worldView.startAll();
+    worldModel.startAll();
+    worldController.startAll();
+  }
+
+  void stop() {
+    worldView.stopAll();
+    worldModel.stopAll();
+    worldController.startAll();
+  }
+
+}
+```
+
+### JavaFX Animation
+WANIS: Why? What problems? How do it work?
+
+- To actually animate `Tram`s and `Car`s on their paths, and to `play`, `pause`, and manually progress (`jumpTo`) animations: [PathTransition](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/PathTransition.html).
+
+- To update relative/paused trams: [AnimationTimer](https://docs.oracle.com/javase/8/javafx/api/javafx/animation/AnimationTimer.html).
+
+### Notes
+- Tried to follow [Google's Java style guide](https://google.github.io/styleguide/javaguide.html)
+
+- Use `Collections.syncronizedList(..)` with [ArrayList](https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html)
