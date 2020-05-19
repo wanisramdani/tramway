@@ -1,7 +1,17 @@
-# Tramway
-Concurrent Programming assignment
+# TramwayFX
+Concurrent Programming assignment.
 
 Process-based simulation in Java/JavaFX à la MVC (more like [MVP](https://stackoverflow.com/a/1317742) actually)
+
+## Screenshots
+
+### ASCII
+![tramway-ascii](./screenshots/tramway-ascii.png)
+
+### JavaFX
+![tramway-javafx](./screenshots/tramway-javafx.jpg)
+
+---
 
 ## Table of Contents
 
@@ -18,11 +28,6 @@ Process-based simulation in Java/JavaFX à la MVC (more like [MVP](https://stack
   - [JavaFX Animation](#javafx-animation)
 
 - [Notes](#notes)
-
-- [Screenshots](#screenshots)
-  - [WorldViewText: ASCII mode](#worldviewtext-ascii-mode)
-  - [WorldViewText: Emoji mode](#worldviewtext-emoji-mode)
-  - [WorldView: JavaFX](#worldview-javafx)
 
 ## Problem
 A traffic-control system to manage traffic lights of trams and cars...
@@ -221,13 +226,6 @@ _See the JavaDoc comments for a description of individual classes and methods._
 
 - We call `worldController.updateView()` from the JavaFX's AnimationTimer because otherwise the WorldController cannot make changes to the WorldView: JavaFX's threads and objects can only be manipulated by/from another JavaFX thread.
 
-## Screenshots
 
-### WorldViewText: ASCII mode
-![tramway-ascii](./screenshots/tramway-ascii.png)
-
-### WorldViewText: Emoji mode
-![tramway-emoji](./screenshots/tramway-emoji.jpg)
-
-### WorldView: JavaFX
-![tramway-javafx](./screenshots/tramway-javafx.jpg)
+## License
+Wanis Ramdani & Abdeldjalil Hebal, under CC BY 3.0
