@@ -3,6 +3,7 @@ package sample;
 public interface WorldViewInterface {
 
     void startAll();
+
     void stopAll();
 
     /**
@@ -10,6 +11,12 @@ public interface WorldViewInterface {
      */
     void setLightColor(int lightId, TrafficColor color);
 
+
+    // ============= TRAMS ============= 
+
+    /**
+     * The minimun difference in "progress" of any two trams in the same segment
+     */
     double getDeltaConstant();
 
     // -------
@@ -51,7 +58,8 @@ public interface WorldViewInterface {
      */
     void destroyTram(int tramId);
 
-    // -------
+
+    // ============= CARS ============= 
 
     /**
      * Create a new car visual representation, respecting the traffic direction

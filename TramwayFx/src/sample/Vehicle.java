@@ -10,9 +10,20 @@ public abstract class Vehicle extends Thread {
 
     // Used for view only
     boolean virgin;
+    // TODO: Replace `virgin` with a HashSet in WorldController to know what vehicles have been displayed:
+    //      something like:
+    //
+    //      HashSet<Integer> alreadyDislayedVehicles = new HashSet<>();
+    //
+    //      int code = vehicle.getCode();
+    //      if (!alreadyDisplayedVehicles.contains(code)) {
+    //           worldView.createTram(code);
+    //           alreadyDisplayedVehicles.add(code);
+    //       }
+    //
 
     /** Logic segment */
-    int segment;
+    int segment = 0;
 
     /** Current direction */
     TrafficDirection dir;
@@ -44,6 +55,17 @@ public abstract class Vehicle extends Thread {
         this(worldMode, segmentQueues, 0);
     }
 
+    Vehicle(WorldModel worldMode) {
+        code = count++;
+        virgin = true;
+
+        bridgeArbiter = worldMode.bridgeArbiter;
+        intersectionArbiter = worldMode.intersectionArbiter;
+        segmentQueues = worldMode.segmentQueues;
+
+        canAdvance = new Semaphore(1);
+    }
+
     int getCode() {
         return code;
     }
@@ -57,7 +79,7 @@ public abstract class Vehicle extends Thread {
             while (true) {
                 canAdvance.acquire();
                 // FIXME: Do this only if we're blocked by enter() for some time
-                //delayAdvancing();
+                // delayAdvancing();
                 advance();
                 // We were interrupted by stopAll() while we were busy
                 if (isInterrupted()) throw new InterruptedException();

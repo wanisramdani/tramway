@@ -18,21 +18,23 @@ public class WorldController implements WorldControllerInterface {
     updateCars();
   }
 
+  public void startViewAutoUpdater() {
+    new java.util.Timer().schedule(
+            new java.util.TimerTask() {
+              @Override
+              public void run() {
+                updateView();
+              }
+            },
+            0,
+            250 // 0.25 sec
+    );
+  }
+
   @Override
   public void startAll() {
-    /*
-    // start viewAutoUpdater
-    new java.util.Timer().schedule(
-        new java.util.TimerTask() {
-          @Override
-          public void run() {
-            updateView();
-          }
-        },
-        0,
-        250 // 0.25 sec
-    );
-     */
+    // TODO: MAYBE make it conditional
+    // startViewAutoUpdater();
   }
 
   @Override
@@ -107,7 +109,7 @@ public class WorldController implements WorldControllerInterface {
   void updateCars() {
 
     for (List<Car> segmentQueue: new List[]{worldModel.carsGoingNorthQueue, worldModel.carsGoingSouthQueue}) {
-      synchronized (segmentQueue) {
+      synchronized(segmentQueue) {
         for (int i = 0; i < segmentQueue.size(); i++) {
           Vehicle car = segmentQueue.get(i);
           int code = car.getCode();
@@ -115,15 +117,15 @@ public class WorldController implements WorldControllerInterface {
           if (car.virgin) {
             car.virgin = false;
             worldView.createCar(code, car.dir);
-            worldView.setCarDynamic(code, true);
           }
 
           // If both the animation and execution have finished, destroy it
-          if (worldView.getCarProgress(code) >= ((WorldView)worldView).CAR_TOTAL_DURATION) {
+          if (worldView.getCarProgress(code) >= 10) {
             worldView.destroyCar(code);
             segmentQueue.removeIf((c) -> c.getCode() == code);
           }
         }
+
       }
     }
 

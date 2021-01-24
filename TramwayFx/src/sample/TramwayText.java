@@ -1,3 +1,5 @@
+package sample;
+
 public class TramwayText {
 
   public static void main(String[] args) {
@@ -20,6 +22,8 @@ public class TramwayText {
     worldView.startAll();
     worldModel.startAll();
     worldController.startAll();
+    
+    worldController.startViewAutoUpdater();
   }
 
   void stop() {

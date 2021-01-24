@@ -14,7 +14,6 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -262,7 +261,7 @@ public class WorldView implements WorldViewInterface {
                 return i;
             }
         }
-        throw new InvalidStateException("Uncovered interval: " + dur);
+        throw new IllegalStateException("Uncovered interval: " + dur);
     }
 
     private double getCuePoint(String s) {

@@ -1,3 +1,5 @@
+package sample;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +24,12 @@ public class WorldViewText implements WorldViewInterface {
           "                                                                     " ;
 
   Map<Integer, Character> lightsMap = Collections.synchronizedMap(new HashMap<>());
-  Map<Integer, Wrapper> vehiclesMap = Collections.synchronizedMap(new HashMap<>());
+  Map<Integer, TextWrapper> vehiclesMap = Collections.synchronizedMap(new HashMap<>());
   Timer redrawer;
 
   // TODO: Support different levels of "fancy": messages, ascii art, emoji, pixel art, etc.
   /** Toggles emojiView mode */
-  boolean fancy = true;
+  boolean fancy = false;
 
   @Override
   public void startAll() {
@@ -192,7 +194,7 @@ public class WorldViewText implements WorldViewInterface {
   }
 
   void createVehicle(int id, TextVehicle v) {
-    Wrapper wrapper = new Wrapper();
+    TextWrapper wrapper = new TextWrapper();
 
     wrapper.textVehicle = v;
 
@@ -297,7 +299,7 @@ public class WorldViewText implements WorldViewInterface {
 
 }
 
-class Wrapper {
+class TextWrapper {
   Timer ticker = null;
   boolean isPaused = false;
   TextVehicle textVehicle = null;

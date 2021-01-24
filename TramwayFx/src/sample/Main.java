@@ -34,7 +34,6 @@ public class Main extends Application {
         worldController.startAll();
         worldModel.startAll();
 
-
     }
 
     void test(WorldView worldView) {
